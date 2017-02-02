@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Barings.Controls.WPF.QueryBuilder.ZQueryExpression"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Barings.Controls.WPF.QueryBuilder"
+             mc:Ignorable="d" 
+             d:DesignHeight="35" d:DesignWidth="500"
+             MaxHeight="35"
+             MinWidth="500"
+             MaxWidth="500"
+             HorizontalAlignment="Left">
+    <UserControl.Resources>
+        <Style x:Key="FadeInStyle" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Duration="0:0:0.5"
+                                         Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width=".65*"></ColumnDefinition>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="25"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="FieldList" Margin="0 0 3 0" SelectionChanged="FieldList_OnSelectionChanged" ToolTip="Select a field"></ComboBox>
+        <ComboBox x:Name="OperationList" Grid.Column="1" Margin="0 0 3 0" SelectionChanged="OperationList_OnSelectionChanged" ToolTip="Select an operation"></ComboBox>
+        <TextBox x:Name="ValueTextBox" Grid.Column="2" Margin="0 0 3 0"></TextBox>
+        <ComboBox x:Name="ValueComboBox" Grid.Column="2" Margin="0 0 3 0" Visibility="Collapsed"></ComboBox>
+        <DatePicker x:Name="ValueDatePicker" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></DatePicker>
+        <Button Grid.Column="3" Margin="0 0 3 0" 
+                x:Name="ConvertToGroupButton" FontWeight="Bold" Foreground="LightSeaGreen"
+                ToolTip="Convert to Group" Click="ConvertToGroupButton_OnClick">-></Button>
+        <Button Grid.Column="4" Margin="0" 
+                x:Name="RemoveButton" FontWeight="Bold" Foreground="IndianRed"
+                ToolTip="Remove Expression" Click="RemoveButton_OnClick">X</Button>
+    </Grid>
+</UserControl>

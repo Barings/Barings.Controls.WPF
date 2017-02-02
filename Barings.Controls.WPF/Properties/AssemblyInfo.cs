@@ -8,9 +8,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Barings.Controls.WPF")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A collection of generic WPF controls (no licensed third party software present).")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Barings")]
 [assembly: AssemblyProduct("Barings.Controls.WPF")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
