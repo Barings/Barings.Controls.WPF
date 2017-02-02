@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Solutions.WPF.Controls</projectUrl>
+    <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Barings.Controls.WPF</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial release of Barings WPF Controls package.</releaseNotes>

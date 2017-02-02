@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Barings.Controls.WPF.QueryBuilder
+namespace Barings.Controls.WPF.QueryBuilder.Attributes
 {
     /// <summary>
     /// Used to specify the table that this class represents for building queries.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
 
 namespace Barings.Controls.WPF.QueryBuilder

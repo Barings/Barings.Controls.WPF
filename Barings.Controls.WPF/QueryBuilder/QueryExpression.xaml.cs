@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Barings.Controls.WPF.QueryBuilder.Attributes;
+using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
 
 namespace Barings.Controls.WPF.QueryBuilder

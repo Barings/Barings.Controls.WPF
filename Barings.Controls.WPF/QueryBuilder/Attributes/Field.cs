@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Barings.Controls.WPF.QueryBuilder
+namespace Barings.Controls.WPF.QueryBuilder.Attributes
 {
 	[Serializable]
 	public class Field

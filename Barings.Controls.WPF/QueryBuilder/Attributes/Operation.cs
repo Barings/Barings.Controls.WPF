@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Barings.Controls.WPF.Extensions;
 
-namespace Barings.Controls.WPF.QueryBuilder
+namespace Barings.Controls.WPF.QueryBuilder.Attributes
 {
 	/// <summary>
 	/// An operation for use in a query expression.

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Barings.Controls.WPF.QueryBuilder.Attributes;
 using Barings.Controls.WPF.QueryBuilder.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
