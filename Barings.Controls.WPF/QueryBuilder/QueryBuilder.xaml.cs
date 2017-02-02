@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,25 +25,47 @@ namespace Barings.Controls.WPF.QueryBuilder
 		private QueryExpressionGroup RootExpressionGroup { get; set; }
 		public List<Field> Fields { get; set; }
 		public string TableName { get; set; }
+		private Type TheType { get; set; }
 
-		public static readonly DependencyProperty ModelTypeProperty = DependencyProperty.Register(
-			"ModelType", typeof(Type), typeof(QueryBuilder), new PropertyMetadata(default(Type), OnModelTypePropertyChanged));
+		public static readonly DependencyProperty CollectionToFilterProperty = DependencyProperty.Register(
+			"CollectionToFilter", typeof(IList), typeof(QueryBuilder), new PropertyMetadata(default(IList), OnCollectionToFilterPropertyChanged));
 
-		public Type ModelType
+		public IList CollectionToFilter
 		{
-			get { return (Type) GetValue(ModelTypeProperty); }
+			get { return (IList) GetValue(CollectionToFilterProperty); }
 			set
 			{
-				SetValue(ModelTypeProperty, value);
+				SetValue(CollectionToFilterProperty, value);
 			}
 		}
 
-		private static void OnModelTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnCollectionToFilterPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			var type = e.NewValue as Type;
+			var collection = e.NewValue as IList;
+
+			if (collection == null) return;
+			
 			var queryBuilder = d as QueryBuilder;
 
-			if (type != null) queryBuilder?.ProcessModelType(type);
+			if (queryBuilder == null || queryBuilder.TheType != null) return;
+			
+			queryBuilder.TheType = HeuristicallyDetermineType(collection);
+			
+			if (queryBuilder.TheType != null) queryBuilder.ProcessModelType(queryBuilder.TheType);
+		}
+
+		private static Type HeuristicallyDetermineType(IList list)
+		{
+			var enumerableType =
+				list.GetType()
+				.GetInterfaces()
+				.Where(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)
+				.FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+
+			if (enumerableType != null)
+				return enumerableType.GenericTypeArguments[0];
+
+			return list.Count == 0 ? null : list[0].GetType();
 		}
 
 		#endregion
@@ -81,6 +105,42 @@ namespace Barings.Controls.WPF.QueryBuilder
 			statement += RootExpressionGroup.Text();
 
 			return statement;
+		}
+
+		public string GetLinqStatement()
+		{
+			var statement = RootExpressionGroup.LinqText();
+
+			return statement;
+		}
+
+		public IList FilterCollection<T>(IEnumerable<T> collection)
+		{
+			var statement = GetLinqStatement();
+
+			IList remainingItems = collection.Where(statement).ToList();
+			IList itemsToRemove = new List<object>();
+			IList itemsToAdd = new List<object>();
+
+			foreach (var item in CollectionToFilter)
+			{
+				if (!remainingItems.Contains(item)) itemsToRemove.Add(item);
+			}
+			foreach (var item in remainingItems)
+			{
+				if (!CollectionToFilter.Contains(item)) itemsToAdd.Add(item);
+			}
+
+			foreach (var item in itemsToRemove)
+			{
+				CollectionToFilter.Remove(item);
+			}
+			foreach (var item in itemsToAdd)
+			{
+				CollectionToFilter.Add(item);
+			}
+
+			return CollectionToFilter;
 		}
 
 		public string SaveToString()
@@ -127,19 +187,11 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#region EVENT HANDLERS
 
+		public event EventHandler GoButtonClick;
+
 		private void GoButtonOnClick(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				var statement = GetSqlStatement();
-
-				MessageBox.Show(statement);
-				Clipboard.SetText(statement);
-			}
-			catch (Exception exception)
-			{
-				MessageBox.Show(exception.Message);
-			}
+			GoButtonClick?.Invoke(sender, e);
 		}
 
 		private void ClearExpressionsOnClick(object sender, RoutedEventArgs e)

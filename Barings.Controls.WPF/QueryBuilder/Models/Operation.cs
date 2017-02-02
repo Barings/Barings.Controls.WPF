@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Windows.Media.TextFormatting;
 using Barings.Controls.WPF.Extensions;
 
 namespace Barings.Controls.WPF.QueryBuilder.Models
@@ -16,7 +19,9 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 		/// <summary>
 		/// A string defining the operation, i.e.: "[field] = [value]".
 		/// </summary>
-		public string Definition { get; set; }
+		public string SqlDefinition { get; set; }
+
+		public string LinqDefinition { get; set; }
 
 		/// <summary>
 		/// Specifies whether or not this operation requires that a value be present.
@@ -28,10 +33,11 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 		/// </summary>
 		public IEnumerable<Type> TypesValidFor;
 
-		public Operation(string name, string definition, params Type[] types)
+		public Operation(string name, string sqlDefinition, string linqDefinition, params Type[] types)
 		{
 			Name = name;
-			Definition = definition;
+			SqlDefinition = sqlDefinition;
+			LinqDefinition = linqDefinition;
 			TypesValidFor = types;
 		}
 
@@ -46,15 +52,31 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 		/// <summary>
 		/// Gets the appropriate expression based on the inputs
 		/// </summary>
-		public string GetExpression(Field field, string value)
+		public string GetSqlExpression(Field field, string value)
 		{
 			string expression;
 			var fieldType = Nullable.GetUnderlyingType(field.FieldType) ?? field.FieldType;
 
 			if (fieldType == typeof(string) || fieldType == typeof(DateTime))
-				expression = Definition.Replace("[field]", $"[{field}]").Replace("[value]", $"'{value}'");
+				expression = SqlDefinition.Replace("[field]", $"[{field}]").Replace("[value]", $"'{value}'");
 			else
-				expression = Definition.Replace("[field]", $"[{field}]").Replace("[value]", value);
+				expression = SqlDefinition.Replace("[field]", $"[{field}]").Replace("[value]", value);
+
+			return expression;
+		}
+
+		public string GetLinqExpression(Field field, string value)
+		{
+			string expression;
+
+			var fieldType = Nullable.GetUnderlyingType(field.FieldType) ?? field.FieldType;
+
+			if (fieldType == typeof(bool)) value = value?.Replace("1", "true").Replace("0", "false");
+
+			if (fieldType == typeof(string) || fieldType == typeof(DateTime))
+				expression = LinqDefinition.Replace("[field]", $"{field}").Replace("[value]", $"\"{value}\"");
+			else
+				expression = LinqDefinition.Replace("[field]", $"{field}").Replace("[value]", value ?? "");
 
 			return expression;
 		}
@@ -71,16 +93,16 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 
 		public static readonly List<Operation> StandardOperations = new List<Operation>
 		{
-			new Operation("Is Equal To", "[field] = [value]"),
-			new Operation("Does Not Equal", "[field] <> [value]", typeof(string), typeof(DateTime)),
-			new Operation("Contains", "[field] LIKE '%[value]%'", typeof(string)),
-			new Operation("Is Null", "[field] IS NULL") {RequiresValue = false},
-			new Operation("Begins With", "[field] LIKE '[value]%'", typeof(string)),
-			new Operation("Ends With", "[field] LIKE '%[value]'", typeof(string)),
-			new Operation("Is Greater Than Or Equal To", "[field] >= [value]", TypeExtensions.FormattableTypes().ToArray()),
-			new Operation("Is Greater Than", "[field] > [value]", TypeExtensions.FormattableTypes().ToArray()),
-			new Operation("Is Less Than Or Equal To", "[field] =< [value]", TypeExtensions.FormattableTypes().ToArray()),
-			new Operation("Is Less Than", "[field] < [value]", TypeExtensions.FormattableTypes().ToArray())
+			new Operation("Is Equal To","[field] == [value]" , "[field] = [value]"),
+			new Operation("Does Not Equal", "[field] != [value]", "[field] <> [value]", typeof(string), typeof(DateTime)),
+			new Operation("Contains", "[field] LIKE '%[value]%'", "[field].Contains([value])", typeof(string)),
+			new Operation("Is Null", "[field] IS NULL", "[field] == null") {RequiresValue = false},
+			new Operation("Begins With", "[field] LIKE '[value]%'", "[field].BeginsWith([value])", typeof(string)),
+			new Operation("Ends With", "[field] LIKE '%[value]'", "[field].EndsWith([value])", typeof(string)),
+			new Operation("Is Greater Than Or Equal To", "[field] >= [value]", "[field] >= [value]", TypeExtensions.FormattableTypes().ToArray()),
+			new Operation("Is Greater Than", "[field] > [value]", "[field] > [value]", TypeExtensions.FormattableTypes().ToArray()),
+			new Operation("Is Less Than Or Equal To", "[field] =< [value]", "[field] <= [value]", TypeExtensions.FormattableTypes().ToArray()),
+			new Operation("Is Less Than", "[field] < [value]", "[field] < [value]", TypeExtensions.FormattableTypes().ToArray())
 		};
 	}
 }

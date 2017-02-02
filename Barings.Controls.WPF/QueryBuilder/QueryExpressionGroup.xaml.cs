@@ -201,6 +201,21 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 			return text + ")";
 		}
+		
+		public string LinqText()
+		{
+			var text = "(\n";
+
+			int i = 0;
+
+			foreach (var expression in NestedExpressions)
+			{
+				i++;
+				text += expression.LinqText() + (i < NestedExpressions.Count ? " " + GroupMenuButton.Content : "") + "\n";
+			}
+
+			return text + ")";
+		}
 
 		#endregion
 

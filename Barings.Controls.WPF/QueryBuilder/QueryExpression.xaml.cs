@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.TextFormatting;
 using Barings.Controls.WPF.Extensions;
 using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
@@ -24,6 +25,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 		#region PROPERTIES
 
 		public QueryExpressionGroup ParentGroup { get; set; }
+
+		public Field Field => FieldList?.SelectedItem as Field;
+		public Operation Operation => OperationList?.SelectedItem as Operation;
 
 		public string StringValue
 		{
@@ -84,30 +88,37 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		public string Text()
 		{
-			var fieldIndex = FieldList.SelectedIndex;
-			var operationIndex = OperationList.SelectedIndex;
+			ValidateExpression();
 
-			if (fieldIndex < 0 || operationIndex < 0)
+			var text = Operation?.GetSqlExpression(Field, StringValue);
+			
+			return text;
+		}
+		
+		public string LinqText()
+		{
+			ValidateExpression();
+
+			var text = Operation?.GetLinqExpression(Field, StringValue);
+
+			return text;
+		}
+
+		public void ValidateExpression()
+		{
+			if (Field == null || Operation == null)
 			{
 				MakeInvalidAppearance();
 				throw new Exception("Expression invalid. Please correct or remove invalid expression.");
 			}
 			// else...
 			MakeValidAppearance();
-			
 
-			var field = FieldList?.Items[fieldIndex] as Field;
-			var operation = OperationList?.Items[operationIndex] as Operation;
-
-			if (operation != null && operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
+			if (Operation != null && Operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
 			{
 				MakeInvalidAppearance();
-				throw new Exception($"Expression for [{operation.Name}] on field [{field}] requires value.");
+				throw new Exception($"Expression for [{Operation.Name}] on field [{Field}] requires value.");
 			}
-			
-			var text = operation?.GetExpression(field, StringValue);
-			
-			return text;
 		}
 
 		private void MakeInvalidAppearance()

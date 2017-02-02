@@ -9,7 +9,7 @@
     <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Barings.Controls.WPF</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added ValueOptionsAttribute for specifying options for a given field.</releaseNotes>
+    <releaseNotes>Add NumericTextBox and spiff up QueryBuilder for MVVM support.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>controls wpf query builder sql</tags>
   </metadata>

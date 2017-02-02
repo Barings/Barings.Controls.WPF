@@ -5,15 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:queryBuilder="clr-namespace:Barings.Controls.WPF.QueryBuilder;assembly=Barings.Controls.WPF"
         xmlns:models="clr-namespace:Barings.Controls.WPF.Examples.Models"
+        xmlns:examples="clr-namespace:Barings.Controls.WPF.Examples"
+        xmlns:viewModels="clr-namespace:Barings.Controls.WPF.Examples.ViewModels"
         mc:Ignorable="d"
         Title="Barings WPF Examples" Height="600" Width="800">
+    <Window.DataContext>
+        <viewModels:AssetViewModel></viewModels:AssetViewModel>
+    </Window.DataContext>
     <Grid>
         <TabControl>
             <TabItem Header="QueryBuilder">
                 <Grid>
-                    <queryBuilder:QueryBuilder ModelType="models:Asset"></queryBuilder:QueryBuilder>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <queryBuilder:QueryBuilder x:Name="QueryBuilder" GoButtonClick="QueryBuilder_OnGoButtonClick" CollectionToFilter="{Binding Collection, Mode=TwoWay}"></queryBuilder:QueryBuilder>
+                    <DataGrid Grid.Row="1" x:Name="Grid" ItemsSource="{Binding Collection, Mode=TwoWay}"></DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>
     </Grid>
 </Window>
+
