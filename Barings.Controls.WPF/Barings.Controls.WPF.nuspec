@@ -4,12 +4,12 @@
     <id>$id$</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>$author$</authors>
+    <authors>Zachary Becknell</authors>
     <owners>$author$</owners>
     <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Barings.Controls.WPF</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial release of Barings WPF Controls package.</releaseNotes>
+    <releaseNotes>Lowered target framework to 4.5.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>controls wpf query builder sql</tags>
   </metadata>

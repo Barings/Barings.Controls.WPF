@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Barings.Controls.WPF.Extensions;
 
-namespace Barings.Controls.WPF.QueryBuilder.Attributes
+namespace Barings.Controls.WPF.QueryBuilder.Models
 {
 	/// <summary>
 	/// An operation for use in a query expression.
@@ -72,7 +72,7 @@ namespace Barings.Controls.WPF.QueryBuilder.Attributes
 		public static readonly List<Operation> StandardOperations = new List<Operation>
 		{
 			new Operation("Is Equal To", "[field] = [value]"),
-			new Operation("Does Not Equal", "[field] <> '[value]'", typeof(string), typeof(DateTime)),
+			new Operation("Does Not Equal", "[field] <> [value]", typeof(string), typeof(DateTime)),
 			new Operation("Contains", "[field] LIKE '%[value]%'", typeof(string)),
 			new Operation("Is Null", "[field] IS NULL") {RequiresValue = false},
 			new Operation("Begins With", "[field] LIKE '[value]%'", typeof(string)),
