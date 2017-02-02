@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Solutions.WPF.Controls</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release of Barings WPF Controls package.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>controls wpf query builder sql</tags>
+  </metadata>
+</package>
