@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,8 +22,27 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		private QueryExpressionGroup RootExpressionGroup { get; set; }
 		public List<Field> Fields { get; set; }
-		public Type ModelType { get; set; }
 		public string TableName { get; set; }
+
+		public static readonly DependencyProperty ModelTypeProperty = DependencyProperty.Register(
+			"ModelType", typeof(Type), typeof(QueryBuilder), new PropertyMetadata(default(Type), OnModelTypePropertyChanged));
+
+		public Type ModelType
+		{
+			get { return (Type) GetValue(ModelTypeProperty); }
+			set
+			{
+				SetValue(ModelTypeProperty, value);
+			}
+		}
+
+		private static void OnModelTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var type = e.NewValue as Type;
+			var queryBuilder = d as QueryBuilder;
+
+			if (type != null) queryBuilder?.ProcessModelType(type);
+		}
 
 		#endregion
 
@@ -35,40 +55,23 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#endregion
 
+
+
 		#region METHODS
 
 		#region PUBLIC
 
-		/// <summary>
-		/// Sets the type by which to populate the fields available for expressions.
-		/// </summary>
-		public void SetModelType(Type type)
+		public void ProcessModelType(Type type)
 		{
-			try
-			{
-				Fields = new List<Field>();
-				ModelType = type;
-				TableName = ResolveTableName(type);
+			Fields = new List<Field>();
+			TableName = ResolveTableName(type);
 
-				var properties = type.GetProperties();
-				foreach (var property in properties)
-				{
-					Fields.Add(new Field(property));
-				}
-				InitializeRootExpressionGroup();
-			}
-			catch (Exception e)
+			var properties = type.GetProperties();
+			foreach (var property in properties)
 			{
-				MessageBox.Show(e.Message);
+				Fields.Add(new Field(property));
 			}
-		}
-
-		/// <summary>
-		/// Sets the type by which to populate the fields available for expressions.
-		/// </summary>
-		public void SetModelTypeFromCollection<T>(IEnumerable<T> collection)
-		{
-			SetModelType(typeof(T));
+			InitializeRootExpressionGroup();
 		}
 
 		public string GetSqlStatement()

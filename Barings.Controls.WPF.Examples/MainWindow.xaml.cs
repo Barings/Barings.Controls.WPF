@@ -11,8 +11,6 @@ namespace Barings.Controls.WPF.Examples
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			QueryBuilder.SetModelType(typeof(Asset));
 		}
 	}
 }

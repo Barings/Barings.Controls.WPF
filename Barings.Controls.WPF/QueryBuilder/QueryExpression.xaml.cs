@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Barings.Controls.WPF.QueryBuilder.Attributes;
+using Barings.Controls.WPF.Extensions;
 using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
 
@@ -34,6 +35,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 					return ValueComboBox?.SelectedValue?.ToString();
 				if (ValueDatePicker.Visibility == Visibility.Visible && ValueDatePicker.SelectedDate.HasValue)
 					return ValueDatePicker?.SelectedDate.Value.ToString("yyyyMMdd");
+				if (ValueNumericTextBox.Visibility == Visibility)
+					return ValueNumericTextBox?.DecimalValue.ToString(CultureInfo.InvariantCulture);
 
 				// else...
 				return null;
@@ -50,6 +53,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 					return ValueComboBox?.SelectedValue;
 				if (ValueDatePicker.Visibility == Visibility.Visible && ValueDatePicker.SelectedDate.HasValue)
 					return ValueDatePicker?.SelectedDate.Value;
+				if (ValueNumericTextBox?.Visibility == Visibility.Visible)
+					return ValueNumericTextBox?.DecimalValue;
 
 				// else...
 				return null;
@@ -139,6 +144,76 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return data;
 		}
 
+		public void SetValue(dynamic value)
+		{
+			if (value == null) return;
+			if (ValueTextBox.Visibility == Visibility.Visible) ValueTextBox.Text = value.ToString();
+			if (ValueComboBox.Visibility == Visibility.Visible) ValueComboBox.SelectedItem = value;
+			if (ValueDatePicker.Visibility == Visibility.Visible) ValueDatePicker.SelectedDate = value;
+			if (ValueNumericTextBox.Visibility == Visibility.Visible) ValueNumericTextBox.SetValue(value);
+		}
+
+		private void SetValueInput()
+		{
+			var operation = OperationList.SelectedItem as Operation;
+
+			if (operation == null) return;
+
+			var field = FieldList.SelectedItem as Field;
+
+			if (field == null) return;
+
+			// Dates
+			if (field.FieldType == typeof(DateTime) || field.FieldType == typeof(DateTime?))
+			{
+				MakeVisible(ValueDatePicker);
+			}
+			else if (field.FieldType.IsNumeric())
+			{
+				MakeVisible(ValueNumericTextBox);
+				ValueComboBox.ItemsSource = null;
+			}
+			else if (field.ValuesRestrictedTo != null && field.ValuesRestrictedTo.Any())
+			{
+				MakeVisible(ValueComboBox);
+				ValueComboBox.ItemsSource = field.ValuesRestrictedTo;
+				ValueComboBox.SelectedItem = field.ValuesRestrictedTo.ToList()[0];
+			}
+			else
+			{
+				MakeVisible(ValueTextBox);
+				
+				
+				ValueDatePicker.SelectedDate = null;
+				ValueComboBox.ItemsSource = null;
+			}
+
+			ValueTextBox.IsEnabled = operation.RequiresValue;
+			ValueComboBox.IsEnabled = operation.RequiresValue;
+			ValueDatePicker.IsEnabled = operation.RequiresValue;
+			ValueNumericTextBox.IsEnabled = operation.RequiresValue;
+
+			if (!operation.RequiresValue) ValueComboBox.SelectedItem = null;
+		}
+
+		private void MakeVisible(Control control)
+		{
+			List<Control> controls = new List<Control>
+			{
+				ValueTextBox,
+				ValueComboBox,
+				ValueDatePicker,
+				ValueNumericTextBox
+			};
+
+			control.Visibility = Visibility.Visible;
+
+			foreach (var item in controls)
+			{
+				if(!ReferenceEquals(item, control)) item.Visibility = Visibility.Collapsed;
+			}
+		}
+
 		#endregion
 
 		#region EVENT HANDLERS
@@ -181,58 +256,6 @@ namespace Barings.Controls.WPF.QueryBuilder
 			FieldList.SelectedItem = data.Field;
 			OperationList.SelectedItem = data.Operation;
 			SetValue(data.Value);
-		}
-
-		public void SetValue(dynamic value)
-		{
-			if (value == null) return;
-			if (ValueTextBox.Visibility == Visibility.Visible) ValueTextBox.Text = value.ToString();
-			if (ValueComboBox.Visibility == Visibility.Visible) ValueComboBox.SelectedItem = value;
-			if (ValueDatePicker.Visibility == Visibility.Visible) ValueDatePicker.SelectedDate = value;
-		}
-
-		private void SetValueInput()
-		{
-			var operation = OperationList.SelectedItem as Operation;
-
-			if (operation == null) return;
-
-			var field = FieldList.SelectedItem as Field;
-
-			if (field?.FieldType == typeof(DateTime) || field?.FieldType == typeof(DateTime?))
-			{
-				ValueTextBox.Visibility = Visibility.Collapsed;
-				ValueComboBox.Visibility = Visibility.Collapsed;
-				ValueDatePicker.Visibility = Visibility.Visible;
-			}
-			else
-			{
-				if (field?.ValuesRestrictedTo != null && field.ValuesRestrictedTo.Any())
-				{
-					ValueTextBox.Visibility = Visibility.Collapsed;
-					ValueComboBox.Visibility = Visibility.Collapsed;
-
-					ValueComboBox.Visibility = Visibility.Visible;
-					ValueComboBox.ItemsSource = field.ValuesRestrictedTo;
-					ValueComboBox.SelectedItem = field.ValuesRestrictedTo.ToList()[0];
-				}
-				else
-				{
-					ValueTextBox.Visibility = Visibility.Visible;
-
-					ValueDatePicker.Visibility = Visibility.Collapsed;
-					ValueDatePicker.SelectedDate = null;
-
-					ValueComboBox.Visibility = Visibility.Collapsed;
-					ValueComboBox.ItemsSource = null;
-				}
-			}
-
-			ValueTextBox.IsEnabled = operation.RequiresValue;
-			ValueComboBox.IsEnabled = operation.RequiresValue;
-			ValueDatePicker.IsEnabled = operation.RequiresValue;
-
-			if (!operation.RequiresValue) ValueComboBox.SelectedItem = null;
 		}
 
 		#endregion

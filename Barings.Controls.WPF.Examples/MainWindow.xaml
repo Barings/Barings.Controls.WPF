@@ -3,11 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barings.Controls.WPF.Examples"
         xmlns:queryBuilder="clr-namespace:Barings.Controls.WPF.QueryBuilder;assembly=Barings.Controls.WPF"
+        xmlns:models="clr-namespace:Barings.Controls.WPF.Examples.Models"
         mc:Ignorable="d"
         Title="Barings WPF Examples" Height="600" Width="800">
     <Grid>
-        <queryBuilder:QueryBuilder x:Name="QueryBuilder"></queryBuilder:QueryBuilder>
+        <TabControl>
+            <TabItem Header="QueryBuilder">
+                <Grid>
+                    <queryBuilder:QueryBuilder ModelType="models:Asset"></queryBuilder:QueryBuilder>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
