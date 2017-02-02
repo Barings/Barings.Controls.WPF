@@ -3,7 +3,7 @@
 namespace Barings.Controls.WPF.QueryBuilder.Models
 {
 	[Serializable]
-	public class QueryExpression
+	public class QueryExpressionData
 	{
 		public Field Field { get; set; }
 		public Operation Operation { get; set; }

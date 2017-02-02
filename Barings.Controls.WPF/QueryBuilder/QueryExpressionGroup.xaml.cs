@@ -7,17 +7,17 @@ using Barings.Controls.WPF.QueryBuilder.Models;
 namespace Barings.Controls.WPF.QueryBuilder
 {
 	[Serializable]
-	public partial class ZQueryExpressionGroup : UserControl, IExpression
+	public partial class QueryExpressionGroup : UserControl, IExpression
 	{
 		#region PROPERTIES
 
 		public IList<IExpression> NestedExpressions { get; } = new List<IExpression>();
-		public ZQueryBuilder Builder { get; set; }
+		public QueryBuilder Builder { get; set; }
 		public bool IsRootGroup { get; private set; }
 
 		#endregion
 
-		public ZQueryExpressionGroup(ZQueryBuilder parentBuilder, bool isRootGroup = false)
+		public QueryExpressionGroup(QueryBuilder parentBuilder, bool isRootGroup = false)
 		{
 			InitializeComponent();
 			Style = (Style) FindResource("FadeInStyle");
@@ -28,9 +28,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#region METHODS
 
-		public ZQueryExpression AddExpression(ZQueryExpression expression = null, int atIndex = -1)
+		public QueryExpression AddExpression(QueryExpression expression = null, int atIndex = -1)
 		{
-			if (expression == null) expression = new ZQueryExpression(this);
+			if (expression == null) expression = new QueryExpression(this);
 			else expression.ParentGroup = this;
 			expression.SetFields(Builder.Fields);
 			
@@ -53,7 +53,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return expression;
 		}
 
-		private void RemoveExpression(ZQueryExpression expression)
+		private void RemoveExpression(QueryExpression expression)
 		{
 			expression.RemoveHandlers();
 			expression.ParentGroup.NestedExpressions.Remove(expression);
@@ -62,9 +62,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 			OnNestedExpressionsChanged();
 		}
 
-		public ZQueryExpressionGroup AddExpressionGroup(ZQueryExpressionGroup group = null, int atIndex = -1)
+		public QueryExpressionGroup AddExpressionGroup(QueryExpressionGroup group = null, int atIndex = -1)
 		{
-			if(group == null) group = new ZQueryExpressionGroup(Builder);
+			if(group == null) group = new QueryExpressionGroup(Builder);
 			group.AddExpression();
 			if(group.NestedExpressions.Count == 1) group.AddExpression();
 			group.Deleting += NestedGroupOnDeleting;
@@ -85,9 +85,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return group;
 		}
 
-		public ZQueryExpressionGroup AddSingleExpressionGroup(ZQueryExpressionGroup group = null)
+		public QueryExpressionGroup AddSingleExpressionGroup(QueryExpressionGroup group = null)
 		{
-			if(group == null) group = new ZQueryExpressionGroup(Builder);
+			if(group == null) group = new QueryExpressionGroup(Builder);
 			group.Deleting += NestedGroupOnDeleting;
 			group.ConvertingToExpression += GroupOnConvertingToExpression;
 
@@ -99,7 +99,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return group;
 		}
 
-		public void RemoveExpressionGroup(ZQueryExpressionGroup group)
+		public void RemoveExpressionGroup(QueryExpressionGroup group)
 		{
 			group.RemoveHandlers();
 
@@ -119,8 +119,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 		{
 			try
 			{
-				var groupToRemove = (ZQueryExpressionGroup) sender;
-				var expressionToAdd = groupToRemove.NestedExpressions[0] as ZQueryExpression;
+				var groupToRemove = (QueryExpressionGroup) sender;
+				var expressionToAdd = groupToRemove.NestedExpressions[0] as QueryExpression;
 				int index = NestedExpressions.IndexOf(groupToRemove);
 
 				RemoveExpressionGroup(groupToRemove);
@@ -140,7 +140,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			try
 			{
 				// Get the expression that wants to convert
-				var expression = sender as ZQueryExpression;
+				var expression = sender as QueryExpression;
 				if (expression == null) return;
 
 				int index = NestedExpressions.IndexOf(expression);
@@ -149,7 +149,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			
 				expression.RemoveButton.IsEnabled = true;
 
-				var group = new ZQueryExpressionGroup(Builder);
+				var group = new QueryExpressionGroup(Builder);
 				group.AddExpression(expression);
 				AddExpressionGroup(group, index);
 			}
@@ -159,27 +159,27 @@ namespace Barings.Controls.WPF.QueryBuilder
 			}
 		}
 
-		public QueryExpressionGroup GetDataObject()
+		public QueryExpressionGroupData GetDataObject()
 		{
-			var data = new QueryExpressionGroup {GroupOperator = GroupMenuButton.Content.ToString()};
+			var data = new QueryExpressionGroupData {GroupOperator = GroupMenuButton.Content.ToString()};
 
 
 			foreach (var item in NestedExpressions)
 			{
-				var group = item as ZQueryExpressionGroup;
+				var group = item as QueryExpressionGroup;
 
 				if (group != null)
 				{
-					if(data.Groups == null) data.Groups = new List<QueryExpressionGroup>();
+					if(data.Groups == null) data.Groups = new List<QueryExpressionGroupData>();
 					data.Groups.Add(group.GetDataObject());
 					continue;
 				}
 
-				var expression = item as ZQueryExpression;
+				var expression = item as QueryExpression;
 
 				if (expression != null)
 				{
-					if(data.Expressions == null) data.Expressions = new List<QueryExpression>();
+					if(data.Expressions == null) data.Expressions = new List<QueryExpressionData>();
 					data.Expressions.Add(expression.GetDataObject());
 				}
 			}
@@ -224,7 +224,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		private void ExpressionOnRemoveClicked(object sender, EventArgs eventArgs)
 		{
-			var expression = sender as ZQueryExpression;
+			var expression = sender as QueryExpression;
 			if (expression == null) return;
 			NestedExpressions.Remove(expression);
 			ExpressionStackPanel.Children.Remove(expression);
@@ -259,7 +259,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 		/// </summary>
 		private void NestedGroupOnDeleting(object sender, EventArgs eventArgs)
 		{
-			var group = sender as ZQueryExpressionGroup;
+			var group = sender as QueryExpressionGroup;
 			if (group == null) return;
 			NestedExpressions.Remove(group);
 			ExpressionStackPanel.Children.Remove(group);
@@ -270,7 +270,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 		{
 			if (IsRootGroup && NestedExpressions.Count > 0)
 			{
-				var firstExpression = NestedExpressions[0] as ZQueryExpression;
+				var firstExpression = NestedExpressions[0] as QueryExpression;
 				if (firstExpression != null) firstExpression.RemoveButton.IsEnabled = NestedExpressions.Count > 1;
 			}
 
@@ -313,7 +313,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#endregion
 
-		public ZQueryExpressionGroup LoadFromData(QueryExpressionGroup expressionGroup)
+		public QueryExpressionGroup LoadFromData(QueryExpressionGroupData expressionGroup)
 		{
 			foreach (var expression in expressionGroup.Expressions)
 			{

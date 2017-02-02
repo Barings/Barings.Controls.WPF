@@ -8,7 +8,7 @@ using Barings.Controls.WPF.QueryBuilder.Models;
 
 namespace Barings.Controls.WPF.QueryBuilder
 {
-	public partial class ZQueryExpression : UserControl, IExpression
+	public partial class QueryExpression : UserControl, IExpression
 	{
 		#region EVENTS
 
@@ -20,7 +20,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#region PROPERTIES
 
-		public ZQueryExpressionGroup ParentGroup { get; set; }
+		public QueryExpressionGroup ParentGroup { get; set; }
 
 		public string StringValue
 		{
@@ -58,7 +58,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#region CONSTRUCTORS
 
-		public ZQueryExpression(ZQueryExpressionGroup parentGroup)
+		public QueryExpression(QueryExpressionGroup parentGroup)
 		{
 			InitializeComponent();
 
@@ -125,9 +125,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 			ConvertToGroupClicked = null;
 		}
 
-		public QueryExpression GetDataObject()
+		public QueryExpressionData GetDataObject()
 		{
-			var data = new QueryExpression
+			var data = new QueryExpressionData
 			{
 				Operation = OperationList?.SelectedItem as Operation,
 				Field = FieldList?.SelectedItem as Field,
@@ -174,7 +174,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			SetValueInput();
 		}
 
-		public void LoadFromData(QueryExpression data)
+		public void LoadFromData(QueryExpressionData data)
 		{
 			FieldList.SelectedItem = data.Field;
 			OperationList.SelectedItem = data.Operation;

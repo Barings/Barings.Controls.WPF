@@ -14,11 +14,11 @@ namespace Barings.Controls.WPF.QueryBuilder
 	/// <summary>
 	/// Interaction logic for ZQueryBuilder.xaml
 	/// </summary>
-	public partial class ZQueryBuilder : UserControl
+	public partial class QueryBuilder : UserControl
 	{
 		#region PROPERTIES
 
-		private ZQueryExpressionGroup RootExpressionGroup { get; set; }
+		private QueryExpressionGroup RootExpressionGroup { get; set; }
 		public List<Field> Fields { get; set; }
 		public Type ModelType { get; set; }
 		public string TableName { get; set; }
@@ -27,7 +27,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#region CONSTRUCTORS
 
-		public ZQueryBuilder()
+		public QueryBuilder()
 		{
 			InitializeComponent();
 		}
@@ -86,9 +86,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		public void LoadFromSavedData(string data)
 		{
-			var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroup>(data);
+			var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroupData>(data);
 
-			RootExpressionGroup = new ZQueryExpressionGroup(this, true);
+			RootExpressionGroup = new QueryExpressionGroup(this, true);
 			ExpressionStackPanel.Children.Clear();
 			ExpressionStackPanel.Children.Add(RootExpressionGroup);
 
@@ -101,7 +101,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		private void InitializeRootExpressionGroup()
 		{
-			RootExpressionGroup = new ZQueryExpressionGroup(this, true);
+			RootExpressionGroup = new QueryExpressionGroup(this, true);
 			RootExpressionGroup.AddExpression();
 			ExpressionStackPanel.Children.Add(RootExpressionGroup);
 		}
