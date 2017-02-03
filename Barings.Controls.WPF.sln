@@ -25,4 +25,16 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfsapp:8080/tfs/prod
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Barings.Controls.WPF.Examples\\Barings.Controls.WPF.Examples.csproj
+		SccProjectName1 = Barings.Controls.WPF.Examples
+		SccLocalPath1 = Barings.Controls.WPF.Examples
+		SccProjectUniqueName2 = Barings.Controls.WPF\\Barings.Controls.WPF.csproj
+		SccProjectName2 = Barings.Controls.WPF
+		SccLocalPath2 = Barings.Controls.WPF
+	EndGlobalSection
 EndGlobal
