@@ -114,11 +114,13 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return statement;
 		}
 
-		public IList FilterCollection<T>(IEnumerable<T> collection)
+		public void FilterCollection<T>(IEnumerable<T> collection)
 		{
 			var statement = GetLinqStatement();
 
+
 			IList remainingItems = collection.Where(statement).ToList();
+
 			IList itemsToRemove = new List<object>();
 			IList itemsToAdd = new List<object>();
 
@@ -135,12 +137,11 @@ namespace Barings.Controls.WPF.QueryBuilder
 			{
 				CollectionToFilter.Remove(item);
 			}
+
 			foreach (var item in itemsToAdd)
 			{
 				CollectionToFilter.Add(item);
 			}
-
-			return CollectionToFilter;
 		}
 
 		public string SaveToString()

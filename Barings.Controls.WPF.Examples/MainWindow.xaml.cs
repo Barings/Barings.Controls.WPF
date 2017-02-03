@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using Barings.Controls.WPF.Examples.Models;
 using System.Windows;
 using Barings.Controls.WPF.Examples.ViewModels;
-using Expression = System.Linq.Expressions.Expression;
 
 namespace Barings.Controls.WPF.Examples
 {

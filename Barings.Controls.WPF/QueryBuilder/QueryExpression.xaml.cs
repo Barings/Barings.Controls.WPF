@@ -106,19 +106,27 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		public void ValidateExpression()
 		{
-			if (Field == null || Operation == null)
-			{
-				MakeInvalidAppearance();
-				throw new Exception("Expression invalid. Please correct or remove invalid expression.");
-			}
-			// else...
-			MakeValidAppearance();
+		    try
+		    {
+		        if (Field == null || Operation == null)
+		        {
+		            MakeInvalidAppearance();
+		            throw new Exception("Expression invalid. Please correct or remove invalid expression.");
+		        }
+		        // else...
+		        MakeValidAppearance();
 
-			if (Operation != null && Operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
-			{
-				MakeInvalidAppearance();
-				throw new Exception($"Expression for [{Operation.Name}] on field [{Field}] requires value.");
-			}
+		        if (Operation != null && Operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
+		        {
+		            MakeInvalidAppearance();
+		            throw new Exception($"Expression for [{Operation.Name}] on field [{Field}] requires value.");
+		        }
+		    }
+		    catch (Exception e)
+		    {
+		        MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		        throw;
+		    }
 		}
 
 		private void MakeInvalidAppearance()
