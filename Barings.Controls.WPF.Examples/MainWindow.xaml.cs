@@ -13,14 +13,5 @@ namespace Barings.Controls.WPF.Examples
 		{
 			InitializeComponent();
 		}
-
-		private void QueryBuilder_OnGoButtonClick(object sender, EventArgs e)
-		{
-			var viewModel = DataContext as AssetViewModel;
-			if (viewModel == null) return;
-			
-			//Grid.ItemsSource = 
-				QueryBuilder.FilterCollection(viewModel.OriginalCollection);
-		}
 	}
 }

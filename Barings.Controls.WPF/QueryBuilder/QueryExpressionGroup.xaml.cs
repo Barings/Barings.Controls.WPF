@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Dynamic;
 using System.Windows;
 using System.Windows.Controls;
+using Barings.Controls.WPF.QueryBuilder.Enums;
+using Barings.Controls.WPF.QueryBuilder.Exceptions;
 using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
+using Enumerable = System.Linq.Enumerable;
 
 namespace Barings.Controls.WPF.QueryBuilder
 {
@@ -12,9 +16,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 	{
 		#region PROPERTIES
 
-		public IList<IExpression> NestedExpressions { get; } = new List<IExpression>();
-		public QueryBuilder Builder { get; set; }
-		public bool IsRootGroup { get; private set; }
+	    private IList<IExpression> NestedExpressions { get; } = new List<IExpression>();
+	    private QueryBuilder Builder { get; set; }
+	    private bool IsRootGroup { get; set; }
 
 		#endregion
 
@@ -63,7 +67,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			OnNestedExpressionsChanged();
 		}
 
-		public QueryExpressionGroup AddExpressionGroup(QueryExpressionGroup group = null, int atIndex = -1)
+	    private void AddExpressionGroup(QueryExpressionGroup group = null, int atIndex = -1)
 		{
 			if(group == null) group = new QueryExpressionGroup(Builder);
 			group.AddExpression();
@@ -82,11 +86,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 				ExpressionStackPanel.Children.Add(group);
 			}
 			OnNestedExpressionsChanged();
-
-			return group;
 		}
 
-		public QueryExpressionGroup AddSingleExpressionGroup(QueryExpressionGroup group = null)
+	    private QueryExpressionGroup AddSingleExpressionGroup(QueryExpressionGroup group = null)
 		{
 			if(group == null) group = new QueryExpressionGroup(Builder);
 			group.Deleting += NestedGroupOnDeleting;
@@ -100,7 +102,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return group;
 		}
 
-		public void RemoveExpressionGroup(QueryExpressionGroup group)
+	    private void RemoveExpressionGroup(QueryExpressionGroup group)
 		{
 			group.RemoveHandlers();
 
@@ -188,40 +190,43 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return data;
 		}
 
-		public string Text()
-		{
-			var text = "(\n";
-			int i = 0;
+	    public string ExpressionText(ExpressionType type)
+	    {
+            var text = "(\n";
 
-			foreach (var expression in NestedExpressions)
-			{
-				i++;
-				text += expression.Text() + (i < NestedExpressions.Count ? " " + GroupMenuButton.Content : "") + "\n";
-			}
+            int i = 0;
 
-			return text + ")";
-		}
-		
-		public string LinqText()
-		{
-			var text = "(\n";
+            List<Exception> validationExceptions = new List<Exception>();
 
-			int i = 0;
+            foreach (var expression in NestedExpressions)
+            {
+                try
+                {
+                    i++;
+                    text += expression.ExpressionText(type) +
+                            (i < NestedExpressions.Count ? " " + GroupMenuButton.Content : "") + "\n";
+                }
+                catch (InvalidQueryExpressionException e)
+                {
+                    validationExceptions.Add(e);
+                }
+            }
 
-			foreach (var expression in NestedExpressions)
-			{
-				i++;
-				text += expression.LinqText() + (i < NestedExpressions.Count ? " " + GroupMenuButton.Content : "") + "\n";
-			}
+            if (validationExceptions.Any())
+            {
+                string message = Enumerable.Aggregate(validationExceptions, string.Empty, (current, exeption) => current + $"{exeption.Message}\n");
 
-			return text + ")";
-		}
+                throw new InvalidQueryExpressionException(message);
+            }
+
+            return text + ")";
+        }
 
 		#endregion
 
 		#region EVENTS
 
-		public void RemoveHandlers()
+	    private void RemoveHandlers()
 		{
 			Deleting = null;
 			ConvertingToExpression = null;
@@ -329,7 +334,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		#endregion
 
-		public QueryExpressionGroup LoadFromData(QueryExpressionGroupData expressionGroup)
+		public void LoadFromData(QueryExpressionGroupData expressionGroup)
 		{
 			foreach (var expression in expressionGroup.Expressions)
 			{
@@ -337,7 +342,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 				zExpression.LoadFromData(expression);
 			}
 
-			if (expressionGroup.Groups == null) return this;
+			if (expressionGroup.Groups == null) return;
 
 			foreach (var group in expressionGroup.Groups)
 			{
@@ -345,8 +350,6 @@ namespace Barings.Controls.WPF.QueryBuilder
 				zExpressionGroup.GroupMenuButton.Content = group.GroupOperator;
 				zExpressionGroup.LoadFromData(group);
 			}
-
-			return this;
 		}
 	}
 }

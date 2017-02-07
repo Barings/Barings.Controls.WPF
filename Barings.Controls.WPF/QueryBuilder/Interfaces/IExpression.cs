@@ -1,8 +1,9 @@
-﻿namespace Barings.Controls.WPF.QueryBuilder.Interfaces
+﻿using Barings.Controls.WPF.QueryBuilder.Enums;
+
+namespace Barings.Controls.WPF.QueryBuilder.Interfaces
 {
 	public interface IExpression
 	{
-		string Text();
-		string LinqText();
+	    string ExpressionText(ExpressionType type);
 	}
 }

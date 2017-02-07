@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using Barings.Controls.WPF.Extensions;
+using Barings.Controls.WPF.QueryBuilder.Enums;
+using Barings.Controls.WPF.QueryBuilder.Exceptions;
 using Barings.Controls.WPF.QueryBuilder.Interfaces;
 using Barings.Controls.WPF.QueryBuilder.Models;
 
@@ -85,47 +87,30 @@ namespace Barings.Controls.WPF.QueryBuilder
 		{
 			FieldList.ItemsSource = fields;
 		}
+        
+	    public string ExpressionText(ExpressionType type)
+	    {
+            ValidateExpression();
 
-		public string Text()
-		{
-			ValidateExpression();
-
-			var text = Operation?.GetSqlExpression(Field, StringValue);
-			
-			return text;
-		}
+	        return type == ExpressionType.Linq
+	            ? Operation?.GetLinqExpression(Field, StringValue)
+	            : Operation?.GetSqlExpression(Field, StringValue);
+	    }
 		
-		public string LinqText()
-		{
-			ValidateExpression();
-
-			var text = Operation?.GetLinqExpression(Field, StringValue);
-
-			return text;
-		}
-
 		public void ValidateExpression()
 		{
-		    try
+		    if (Field == null || Operation == null)
 		    {
-		        if (Field == null || Operation == null)
-		        {
-		            MakeInvalidAppearance();
-		            throw new Exception("Expression invalid. Please correct or remove invalid expression.");
-		        }
-		        // else...
-		        MakeValidAppearance();
-
-		        if (Operation != null && Operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
-		        {
-		            MakeInvalidAppearance();
-		            throw new Exception($"Expression for [{Operation.Name}] on field [{Field}] requires value.");
-		        }
+		        MakeInvalidAppearance();
+		        throw new InvalidQueryExpressionException("Expression invalid. Please select both a field and operation.");
 		    }
-		    catch (Exception e)
+		    // else...
+		    MakeValidAppearance();
+
+		    if (Operation != null && Operation.RequiresValue && string.IsNullOrWhiteSpace(StringValue))
 		    {
-		        MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-		        throw;
+		        MakeInvalidAppearance();
+		        throw new InvalidQueryExpressionException($"Expression for [{Operation.Name}] on field [{Field}] requires value.");
 		    }
 		}
 

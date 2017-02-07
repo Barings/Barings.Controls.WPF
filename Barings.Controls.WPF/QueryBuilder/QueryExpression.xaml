@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Barings.Controls.WPF.QueryBuilder"
              xmlns:wpf="clr-namespace:Barings.Controls.WPF"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="35" d:DesignWidth="500"
-             MaxHeight="35"
+             d:DesignHeight="30" d:DesignWidth="500"
+             MaxHeight="30"
              MinWidth="500"
              MaxWidth="500"
              HorizontalAlignment="Left">
@@ -33,19 +34,27 @@
             <ColumnDefinition Width="30"></ColumnDefinition>
             <ColumnDefinition Width="25"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="FieldList" Margin="0 0 3 0" SelectionChanged="FieldList_OnSelectionChanged" ToolTip="Select a field"></ComboBox>
-        <ComboBox x:Name="OperationList" Grid.Column="1" Margin="0 0 3 0" SelectionChanged="OperationList_OnSelectionChanged" ToolTip="Select an operation"></ComboBox>
+        <ComboBox x:Name="FieldList" Margin="0 0 3 0" VerticalContentAlignment="Center" SelectionChanged="FieldList_OnSelectionChanged" ToolTip="Select a field"></ComboBox>
+        <ComboBox x:Name="OperationList" Grid.Column="1" VerticalContentAlignment="Center" Margin="0 0 3 0" SelectionChanged="OperationList_OnSelectionChanged" ToolTip="Select an operation"></ComboBox>
         
-        <TextBox x:Name="ValueTextBox" Grid.Column="2" Margin="0 0 3 0"></TextBox>
-        <wpf:NumericTextBox x:Name="ValueNumericTextBox" Grid.Column="2" Margin="0 0 3 0" Visibility="Collapsed"></wpf:NumericTextBox>
-        <ComboBox x:Name="ValueComboBox" Grid.Column="2" Margin="0 0 3 0" Visibility="Collapsed"></ComboBox>
+        <TextBox x:Name="ValueTextBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center"></TextBox>
+        <wpf:NumericTextBox x:Name="ValueNumericTextBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></wpf:NumericTextBox>
+        <ComboBox x:Name="ValueComboBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></ComboBox>
         <DatePicker x:Name="ValueDatePicker" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></DatePicker>
-        
+
         <Button Grid.Column="3" Margin="0 0 3 0" 
                 x:Name="ConvertToGroupButton" FontWeight="Bold" Foreground="LightSeaGreen"
-                ToolTip="Convert to Group" Click="ConvertToGroupButton_OnClick">-></Button>
-        <Button Grid.Column="4" Margin="0" 
-                x:Name="RemoveButton" FontWeight="Bold" Foreground="IndianRed"
-                ToolTip="Remove Expression" Click="RemoveButton_OnClick">X</Button>
+                ToolTip="Convert to Group" Click="ConvertToGroupButton_OnClick" Padding="5">
+            <Button.Content>
+                <fa:ImageAwesome Icon="ArrowRight" Foreground="LightSeaGreen"></fa:ImageAwesome>
+            </Button.Content>
+        </Button>
+        <Button Grid.Column="4" Margin="0"
+                x:Name="RemoveButton" Padding="5"
+                ToolTip="Remove Expression" Click="RemoveButton_OnClick">
+            <Button.Content>
+                <fa:ImageAwesome Icon="Remove" Foreground="IndianRed"></fa:ImageAwesome>
+            </Button.Content>
+        </Button>
     </Grid>
 </UserControl>

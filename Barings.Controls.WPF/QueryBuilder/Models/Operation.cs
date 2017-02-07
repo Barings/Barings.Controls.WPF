@@ -84,7 +84,15 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 		        ? $"\"{value}\""
 		        : value ?? "";
 
-            return LinqDefinition.Replace("[field]", $"{field}").Replace("[value]", value);
+		    string fieldSuffix = string.Empty;
+
+            // String comparisons should ignore case
+		    if (fieldType == typeof(string))
+		    {
+		        fieldSuffix = ".ToUpper()";
+		    }
+
+            return LinqDefinition.Replace("[field]", field + fieldSuffix).Replace("[value]", value + fieldSuffix);
 		}
 
 		public override string ToString()
@@ -101,9 +109,9 @@ namespace Barings.Controls.WPF.QueryBuilder.Models
 		{
 			new Operation("Is Equal To","[field] == [value]" , "[field] = [value]"),
 			new Operation("Does Not Equal", "[field] != [value]", "[field] <> [value]", typeof(string), typeof(DateTime)),
-			new Operation("Contains", "[field] LIKE '%[value]%'", "[field].ToUpper().Contains([value].ToUpper())", typeof(string)),
+			new Operation("Contains", "[field] LIKE '%[value]%'", "[field].Contains([value])", typeof(string)),
 			new Operation("Is Null", "[field] IS NULL", "[field] == null") {RequiresValue = false},
-			new Operation("Begins With", "[field] LIKE '[value]%'", "[field].BeginsWith([value])", typeof(string)),
+			new Operation("Begins With", "[field] LIKE '[value]%'", "[field].StartsWith([value])", typeof(string)),
 			new Operation("Ends With", "[field] LIKE '%[value]'", "[field].EndsWith([value])", typeof(string)),
 			new Operation("Is Greater Than Or Equal To", "[field] >= [value]", "[field] >= [value]", TypeExtensions.FormattableTypes().ToArray()),
 			new Operation("Is Greater Than", "[field] > [value]", "[field] > [value]", TypeExtensions.FormattableTypes().ToArray()),

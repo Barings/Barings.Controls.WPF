@@ -24,6 +24,7 @@
                     Click="SaveButtonOnClick">Save to file</Button>
                 <Button x:Name="LoadButton" Padding="5 0" Margin="0 0 5 0"
                     Click="LoadButtonOnClick">Load from file</Button>
+                <!--<CheckBox x:Name="AutoUpdateCheckBox" VerticalContentAlignment="Center" ToolTip="Auto update filter results.">Auto Update</CheckBox>-->
             </StackPanel>
             <Button Grid.Column="2" x:Name="ClearButton" Margin="0 0 5 0"
                     Click="ClearExpressionsOnClick" ToolTip="Clear all expressions">Clear</Button>

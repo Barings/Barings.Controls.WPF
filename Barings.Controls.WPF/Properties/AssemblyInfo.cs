@@ -49,7 +49,7 @@ using System.Windows;
 //      Revision
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
+// by using the '*' as shown below:cd bar
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.1.1.0")]
+[assembly: AssemblyFileVersion("1.1.1.0")]

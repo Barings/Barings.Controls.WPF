@@ -1,249 +1,240 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Barings.Controls.WPF.Extensions;
 using Barings.Controls.WPF.QueryBuilder.Attributes;
+using Barings.Controls.WPF.QueryBuilder.Enums;
 using Barings.Controls.WPF.QueryBuilder.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace Barings.Controls.WPF.QueryBuilder
 {
-	/// <summary>
-	/// Interaction logic for ZQueryBuilder.xaml
-	/// </summary>
-	public partial class QueryBuilder : UserControl
-	{
-		#region PROPERTIES
+    /// <summary>
+    /// Interaction logic for ZQueryBuilder.xaml
+    /// </summary>
+    public partial class QueryBuilder : UserControl
+    {
+        #region PROPERTIES
 
-		private QueryExpressionGroup RootExpressionGroup { get; set; }
-		public List<Field> Fields { get; set; }
-		public string TableName { get; set; }
-		private Type TheType { get; set; }
+        private IList OriginalList { get; set; }
+        private QueryExpressionGroup RootExpressionGroup { get; set; }
+        public List<Field> Fields { get; set; }
+        public string TableName { get; set; }
+        private Type TheType { get; set; }
 
-		public static readonly DependencyProperty CollectionToFilterProperty = DependencyProperty.Register(
-			"CollectionToFilter", typeof(IList), typeof(QueryBuilder), new PropertyMetadata(default(IList), OnCollectionToFilterPropertyChanged));
+        public static readonly DependencyProperty CollectionToFilterProperty = DependencyProperty.Register(
+            "CollectionToFilter", typeof(IList), typeof(QueryBuilder),
+            new PropertyMetadata(default(IList), OnCollectionToFilterPropertyChanged));
 
-		public IList CollectionToFilter
-		{
-			get { return (IList) GetValue(CollectionToFilterProperty); }
-			set
-			{
-				SetValue(CollectionToFilterProperty, value);
-			}
-		}
+        public IList CollectionToFilter
+        {
+            get { return (IList)GetValue(CollectionToFilterProperty); }
+            set
+            {
+                SetValue(CollectionToFilterProperty, value);
+            }
+        }
 
-		private static void OnCollectionToFilterPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var collection = e.NewValue as IList;
+        private static void OnCollectionToFilterPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var collection = e.NewValue as IList;
+            var queryBuilder = d as QueryBuilder;
+            if (queryBuilder == null || queryBuilder.TheType != null || collection == null) return;
 
-			if (collection == null) return;
-			
-			var queryBuilder = d as QueryBuilder;
+            //if (queryBuilder.OriginalList == null) queryBuilder.OriginalList = aad;
+            queryBuilder.TheType = HeuristicallyDetermineType(collection);
+            if (queryBuilder.TheType != null) queryBuilder.ProcessModelType(queryBuilder.TheType);
+            if (queryBuilder.OriginalList == null) queryBuilder.OriginalList = collection.JsonCloneObject(queryBuilder.TheType) as IList;
+        }
 
-			if (queryBuilder == null || queryBuilder.TheType != null) return;
-			
-			queryBuilder.TheType = HeuristicallyDetermineType(collection);
-			
-			if (queryBuilder.TheType != null) queryBuilder.ProcessModelType(queryBuilder.TheType);
-		}
+        private static Type HeuristicallyDetermineType(IList list)
+        {
+            var enumerableType =
+                list.GetType()
+                .GetInterfaces()
+                .Where(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)
+                .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 
-		private static Type HeuristicallyDetermineType(IList list)
-		{
-			var enumerableType =
-				list.GetType()
-				.GetInterfaces()
-				.Where(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)
-				.FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            if (enumerableType != null)
+                return enumerableType.GenericTypeArguments[0];
 
-			if (enumerableType != null)
-				return enumerableType.GenericTypeArguments[0];
+            return list.Count == 0 ? null : list[0].GetType();
+        }
 
-			return list.Count == 0 ? null : list[0].GetType();
-		}
+        #endregion
 
-		#endregion
+        #region CONSTRUCTORS
 
-		#region CONSTRUCTORS
+        public QueryBuilder()
+        {
+            InitializeComponent();
+        }
 
-		public QueryBuilder()
-		{
-			InitializeComponent();
-		}
+        #endregion
 
-		#endregion
+        #region METHODS
 
+        #region PUBLIC
 
+        public void ProcessModelType(Type type)
+        {
+            Fields = new List<Field>();
+            TableName = ResolveTableName(type);
 
-		#region METHODS
+            var properties = type.GetProperties();
+            foreach (var property in properties)
+            {
+                Fields.Add(new Field(property));
+            }
+            InitializeRootExpressionGroup();
+        }
 
-		#region PUBLIC
+        public string GetStatement(ExpressionType type)
+        {
+            return type == ExpressionType.Sql ? $"SELECT *\nFROM {TableName}\nWHERE\n" : "" + RootExpressionGroup.ExpressionText(type);
+        }
 
-		public void ProcessModelType(Type type)
-		{
-			Fields = new List<Field>();
-			TableName = ResolveTableName(type);
+        public void FilterCollection()
+        {
+            try
+            {
+                var statement = GetStatement(ExpressionType.Linq);
+            
+                var ri = OriginalList.Where(statement);
+                var remainingItems = ri as IList<object> ?? ri.Cast<object>().ToList();
 
-			var properties = type.GetProperties();
-			foreach (var property in properties)
-			{
-				Fields.Add(new Field(property));
-			}
-			InitializeRootExpressionGroup();
-		}
+                IList itemsToRemove = new List<object>();
+                IList itemsToAdd = new List<object>();
 
-		public string GetSqlStatement()
-		{
-			string statement = $"SELECT *\nFROM {TableName}\nWHERE\n";
+                foreach (var item in CollectionToFilter)
+                {
+                    if (!remainingItems.Contains(item)) itemsToRemove.Add(item);
+                }
+                foreach (var item in remainingItems)
+                {
+                    if (!CollectionToFilter.Contains(item)) itemsToAdd.Add(item);
+                }
 
-			statement += RootExpressionGroup.Text();
+                foreach (var item in itemsToRemove)
+                {
+                    CollectionToFilter.Remove(item);
+                }
 
-			return statement;
-		}
+                foreach (var item in itemsToAdd)
+                {
+                    CollectionToFilter.Add(item);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error filtering collection", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-		public string GetLinqStatement()
-		{
-			var statement = RootExpressionGroup.LinqText();
+        public string SaveToString()
+        {
+            return JsonConvert.SerializeObject(RootExpressionGroup.GetDataObject(), Formatting.Indented);
+        }
 
-			return statement;
-		}
+        public void LoadFromSavedData(string data)
+        {
+            var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroupData>(data);
 
-		public void FilterCollection<T>(IEnumerable<T> collection)
-		{
-			var statement = GetLinqStatement();
+            RootExpressionGroup = new QueryExpressionGroup(this, true);
+            ExpressionStackPanel.Children.Clear();
+            ExpressionStackPanel.Children.Add(RootExpressionGroup);
 
+            RootExpressionGroup.LoadFromData(expressionGroup);
+        }
 
-			IList remainingItems = collection.Where(statement).ToList();
+        #endregion
 
-			IList itemsToRemove = new List<object>();
-			IList itemsToAdd = new List<object>();
+        #region PRIVATE
 
-			foreach (var item in CollectionToFilter)
-			{
-				if (!remainingItems.Contains(item)) itemsToRemove.Add(item);
-			}
-			foreach (var item in remainingItems)
-			{
-				if (!CollectionToFilter.Contains(item)) itemsToAdd.Add(item);
-			}
+        private void InitializeRootExpressionGroup()
+        {
+            RootExpressionGroup = new QueryExpressionGroup(this, true);
+            RootExpressionGroup.AddExpression();
+            ExpressionStackPanel.Children.Add(RootExpressionGroup);
+        }
 
-			foreach (var item in itemsToRemove)
-			{
-				CollectionToFilter.Remove(item);
-			}
+        private static string ResolveTableName(MemberInfo type)
+        {
+            var attributes = type.GetCustomAttributes();
+            var tableAttribute = attributes.FirstOrDefault(a => a is QueryTableAttribute) as QueryTableAttribute;
 
-			foreach (var item in itemsToAdd)
-			{
-				CollectionToFilter.Add(item);
-			}
-		}
+            return tableAttribute == null ? type.Name : tableAttribute.TableName;
+            // else...
+        }
 
-		public string SaveToString()
-		{
-			return JsonConvert.SerializeObject(RootExpressionGroup.GetDataObject(), Formatting.Indented);
-		}
+        #endregion
 
-		public void LoadFromSavedData(string data)
-		{
-			var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroupData>(data);
+        #endregion
 
-			RootExpressionGroup = new QueryExpressionGroup(this, true);
-			ExpressionStackPanel.Children.Clear();
-			ExpressionStackPanel.Children.Add(RootExpressionGroup);
+        #region EVENT HANDLERS
 
-			RootExpressionGroup.LoadFromData(expressionGroup);
-		}
+        private void GoButtonOnClick(object sender, RoutedEventArgs e)
+        {
+            FilterCollection();
+        }
 
-		#endregion
+        private void ClearExpressionsOnClick(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to clear all expressions?", "Are you sure?",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-		#region PRIVATE
+            if (result == MessageBoxResult.Yes)
+            {
+                ExpressionStackPanel.Children.Clear();
+                RootExpressionGroup = null;
+                InitializeRootExpressionGroup();
+                CollectionToFilter = OriginalList.JsonCloneObject(TheType) as IList;
+            }
+        }
 
-		private void InitializeRootExpressionGroup()
-		{
-			RootExpressionGroup = new QueryExpressionGroup(this, true);
-			RootExpressionGroup.AddExpression();
-			ExpressionStackPanel.Children.Add(RootExpressionGroup);
-		}
+        private void SaveButtonOnClick(object sender, RoutedEventArgs e)
+        {
+            var data = SaveToString();
 
-		private string ResolveTableName(Type type)
-		{
-			var attributes = type.GetCustomAttributes();
-			var tableAttribute = attributes.FirstOrDefault(a => a is QueryTableAttribute) as QueryTableAttribute;
+            var dialog = new SaveFileDialog
+            {
+                Filter = "JSON file (*.json)|*.json",
+                FileName = $"{TableName} Query"
+            };
 
-			if (tableAttribute == null) return type.Name;
-			// else...
+            if (dialog.ShowDialog() == true)
+            {
+                File.WriteAllText(dialog.FileName, data);
+            }
 
-			return tableAttribute.TableName;
-		}
+        }
 
-		#endregion
+        private void LoadButtonOnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var dialog = new OpenFileDialog { Filter = "JSON file (*.json)|*.json" };
 
-		#endregion
+                if (dialog.ShowDialog() == true)
+                {
+                    var text = File.ReadAllText(dialog.FileName);
 
-		#region EVENT HANDLERS
+                    LoadFromSavedData(text);
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
 
-		public event EventHandler GoButtonClick;
-
-		private void GoButtonOnClick(object sender, RoutedEventArgs e)
-		{
-			GoButtonClick?.Invoke(sender, e);
-		}
-
-		private void ClearExpressionsOnClick(object sender, RoutedEventArgs e)
-		{
-			var result = MessageBox.Show("Are you sure you want to clear all expressions?", "Are you sure?",
-				MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-			if (result == MessageBoxResult.Yes)
-			{
-				ExpressionStackPanel.Children.Clear();
-				RootExpressionGroup = null;
-				InitializeRootExpressionGroup();
-			}
-		}
-
-		private void SaveButtonOnClick(object sender, RoutedEventArgs e)
-		{
-			var data = SaveToString();
-
-			SaveFileDialog dialog = new SaveFileDialog
-			{
-				Filter = "JSON file (*.json)|*.json",
-				FileName = $"{TableName} Query"
-			};
-
-			if (dialog.ShowDialog() == true)
-			{
-				File.WriteAllText(dialog.FileName, data);
-			}
-			
-		}
-
-		private void LoadButtonOnClick(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				OpenFileDialog dialog = new OpenFileDialog {Filter = "JSON file (*.json)|*.json"};
-
-				if (dialog.ShowDialog() == true)
-				{
-					var text = File.ReadAllText(dialog.FileName);
-
-					LoadFromSavedData(text);
-				}
-			}
-			catch (Exception exception)
-			{
-				MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-			}
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

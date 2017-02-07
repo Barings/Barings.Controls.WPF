@@ -9,7 +9,7 @@
     <projectUrl>http://imgitpr01.private.massmutual.com/zbecknell/Barings.Controls.WPF</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Adds dynamic front end filtering using the Dynamic Linq Library.</releaseNotes>
+    <releaseNotes>No more code in code-behind (thanks Sundeep!); added FontAwesome icon library</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>controls wpf query builder sql</tags>
   </metadata>
