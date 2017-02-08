@@ -1,3 +1,6 @@
 # Barings.Controls.WPF
 
-A collection of generic WPF controls.
+A collection of WPF controls:
+
+* NumericTextBox
+* QueryBuilder
