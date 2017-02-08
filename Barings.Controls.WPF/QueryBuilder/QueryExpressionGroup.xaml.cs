@@ -336,6 +336,9 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		public void LoadFromData(QueryExpressionGroupData expressionGroup)
 		{
+            if (!string.IsNullOrEmpty(expressionGroup.GroupOperator))
+                GroupMenuButton.Content = expressionGroup.GroupOperator;
+
 			foreach (var expression in expressionGroup.Expressions)
 			{
 				var zExpression = AddExpression();
@@ -347,7 +350,6 @@ namespace Barings.Controls.WPF.QueryBuilder
 			foreach (var group in expressionGroup.Groups)
 			{
 				var zExpressionGroup = AddSingleExpressionGroup();
-				zExpressionGroup.GroupMenuButton.Content = group.GroupOperator;
 				zExpressionGroup.LoadFromData(group);
 			}
 		}
