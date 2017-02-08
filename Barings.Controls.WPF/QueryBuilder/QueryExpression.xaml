@@ -37,10 +37,10 @@
         <ComboBox x:Name="FieldList" Margin="0 0 3 0" VerticalContentAlignment="Center" SelectionChanged="FieldList_OnSelectionChanged" ToolTip="Select a field"></ComboBox>
         <ComboBox x:Name="OperationList" Grid.Column="1" VerticalContentAlignment="Center" Margin="0 0 3 0" SelectionChanged="OperationList_OnSelectionChanged" ToolTip="Select an operation"></ComboBox>
         
-        <TextBox x:Name="ValueTextBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center"></TextBox>
-        <wpf:NumericTextBox x:Name="ValueNumericTextBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></wpf:NumericTextBox>
-        <ComboBox x:Name="ValueComboBox" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></ComboBox>
-        <DatePicker x:Name="ValueDatePicker" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></DatePicker>
+        <TextBox x:Name="ValueTextBox" PreviewKeyUp="ValueTextBox_OnPreviewKeyUp" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center"></TextBox>
+        <wpf:NumericTextBox x:Name="ValueNumericTextBox" PreviewKeyUp="ValueTextBox_OnPreviewKeyUp" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></wpf:NumericTextBox>
+        <ComboBox x:Name="ValueComboBox" SelectionChanged="Value_OnSelectionChanged" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></ComboBox>
+        <DatePicker x:Name="ValueDatePicker" SelectedDateChanged="Value_OnSelectionChanged" Grid.Column="2" Margin="0 0 3 0" VerticalContentAlignment="Center" Visibility="Collapsed"></DatePicker>
 
         <Button Grid.Column="3" Margin="0 0 3 0" 
                 x:Name="ConvertToGroupButton" FontWeight="Bold" Foreground="LightSeaGreen"

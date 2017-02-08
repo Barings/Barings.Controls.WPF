@@ -41,6 +41,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			
 			expression.RemoveClicked += ExpressionOnRemoveClicked;
 			expression.ConvertToGroupClicked += ExpressionOnConvertToGroupClicked;
+		    expression.ExpressionChanged += (sender, args) => ExpressionChanged?.Invoke(sender, args);
 
 			if (atIndex >= 0)
 			{
@@ -74,6 +75,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			if(group.NestedExpressions.Count == 1) group.AddExpression();
 			group.Deleting += NestedGroupOnDeleting;
 			group.ConvertingToExpression += GroupOnConvertingToExpression;
+		    group.ExpressionChanged += (sender, args) => ExpressionChanged?.Invoke(sender, args);
 
 			if (atIndex >= 0)
 			{
@@ -93,6 +95,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 			if(group == null) group = new QueryExpressionGroup(Builder);
 			group.Deleting += NestedGroupOnDeleting;
 			group.ConvertingToExpression += GroupOnConvertingToExpression;
+		    group.ExpressionChanged += (sender, args) => ExpressionChanged?.Invoke(sender, args);
 
 			NestedExpressions.Add(group);
 			ExpressionStackPanel.Children.Add(group);
@@ -243,6 +246,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		public event EventHandler ConvertingToExpression;
 
+        public event EventHandler ExpressionChanged;
+
 		private void ExpressionOnRemoveClicked(object sender, EventArgs eventArgs)
 		{
 			var expression = sender as QueryExpression;
@@ -310,12 +315,14 @@ namespace Barings.Controls.WPF.QueryBuilder
 			{
 				Delete(this, new RoutedEventArgs());
 			}
+            ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void OperatorButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			GroupMenuButton.Content = ((MenuItem) sender).Header;
 			GroupMenuButton.IsOpen = false;
+            ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void GroupMenuButton_OnClick(object sender, RoutedEventArgs e)

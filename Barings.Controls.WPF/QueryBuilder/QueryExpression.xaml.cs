@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.TextFormatting;
 using Barings.Controls.WPF.Extensions;
 using Barings.Controls.WPF.QueryBuilder.Enums;
 using Barings.Controls.WPF.QueryBuilder.Exceptions;
@@ -21,6 +21,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 		public event EventHandler RemoveClicked;
 
 		public event EventHandler ConvertToGroupClicked;
+
+	    public event EventHandler ExpressionChanged;
 
 		#endregion
 
@@ -134,6 +136,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 		{
 			RemoveClicked = null;
 			ConvertToGroupClicked = null;
+		    ExpressionChanged = null;
 		}
 
 		public QueryExpressionData GetDataObject()
@@ -155,6 +158,8 @@ namespace Barings.Controls.WPF.QueryBuilder
 			if (ValueComboBox.Visibility == Visibility.Visible) ValueComboBox.SelectedItem = value;
 			if (ValueDatePicker.Visibility == Visibility.Visible) ValueDatePicker.SelectedDate = value;
 			if (ValueNumericTextBox.Visibility == Visibility.Visible) ValueNumericTextBox.SetValue(value);
+
+            ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void SetValueInput()
@@ -224,16 +229,12 @@ namespace Barings.Controls.WPF.QueryBuilder
 
 		private void RemoveButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			EventHandler handler = RemoveClicked;
-
-			handler?.Invoke(this, e);
+			RemoveClicked?.Invoke(this, e);
 		}
 
 		private void ConvertToGroupButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			EventHandler handler = ConvertToGroupClicked;
-
-			handler?.Invoke(this, e);
+			ConvertToGroupClicked?.Invoke(this, e);
 		}
 
 		private void FieldList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -248,11 +249,15 @@ namespace Barings.Controls.WPF.QueryBuilder
 			OperationList.SelectedIndex = 0;
 
 			SetValueInput();
+
+            ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void OperationList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			SetValueInput();
+
+            ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public void LoadFromData(QueryExpressionData data)
@@ -263,5 +268,15 @@ namespace Barings.Controls.WPF.QueryBuilder
 		}
 
 		#endregion
+
+	    private void Value_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	    {
+	        ExpressionChanged?.Invoke(this, EventArgs.Empty);
+	    }
+
+	    private void ValueTextBox_OnPreviewKeyUp(object sender, KeyEventArgs e)
+	    {
+	        ExpressionChanged?.Invoke(this, EventArgs.Empty);
+	    }
 	}
 }

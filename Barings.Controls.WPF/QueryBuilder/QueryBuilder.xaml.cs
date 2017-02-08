@@ -101,12 +101,17 @@ namespace Barings.Controls.WPF.QueryBuilder
             return type == ExpressionType.Sql ? $"SELECT *\nFROM {TableName}\nWHERE\n" : "" + RootExpressionGroup.ExpressionText(type);
         }
 
+        private bool IsFiltering { get; set; }
+        private bool IsLoading { get; set; }
+
         public void FilterCollection()
         {
             try
             {
+                IsFiltering = true;
+
                 var statement = GetStatement(ExpressionType.Linq);
-            
+
                 var ri = OriginalList.Where(statement);
                 var remainingItems = ri as IList<object> ?? ri.Cast<object>().ToList();
 
@@ -134,7 +139,12 @@ namespace Barings.Controls.WPF.QueryBuilder
             }
             catch (Exception e)
             {
+                if (AutoUpdateCheckBox.IsChecked == true) return;
                 MessageBox.Show(e.Message, "Error filtering collection", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsFiltering = false;
             }
         }
 
@@ -145,24 +155,39 @@ namespace Barings.Controls.WPF.QueryBuilder
 
         public void LoadFromSavedData(string data)
         {
-            var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroupData>(data);
+            try
+            {
+                IsLoading = true;
 
-            RootExpressionGroup = new QueryExpressionGroup(this, true);
-            ExpressionStackPanel.Children.Clear();
-            ExpressionStackPanel.Children.Add(RootExpressionGroup);
+                var expressionGroup = JsonConvert.DeserializeObject<QueryExpressionGroupData>(data);
 
-            RootExpressionGroup.LoadFromData(expressionGroup);
+                ExpressionStackPanel.Children.Clear();
+                InitializeRootExpressionGroup(false);
+
+                RootExpressionGroup.LoadFromData(expressionGroup);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         #endregion
 
         #region PRIVATE
 
-        private void InitializeRootExpressionGroup()
+        private void InitializeRootExpressionGroup(bool withChild = true)
         {
             RootExpressionGroup = new QueryExpressionGroup(this, true);
-            RootExpressionGroup.AddExpression();
+            if(withChild) RootExpressionGroup.AddExpression();
+            RootExpressionGroup.ExpressionChanged += RootExpressionGroupOnExpressionChanged;
             ExpressionStackPanel.Children.Add(RootExpressionGroup);
+        }
+
+        private void RootExpressionGroupOnExpressionChanged(object sender, EventArgs eventArgs)
+        {
+            if (AutoUpdateCheckBox.IsChecked == false || IsFiltering || IsLoading) return;
+            FilterCollection();
         }
 
         private static string ResolveTableName(MemberInfo type)
@@ -236,5 +261,16 @@ namespace Barings.Controls.WPF.QueryBuilder
         }
 
         #endregion
+
+        private void AutoUpdateCheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            RootExpressionGroupOnExpressionChanged(sender, e);
+            GoButton.IsEnabled = false;
+        }
+
+        private void AutoUpdateCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            GoButton.IsEnabled = true;
+        }
     }
 }
