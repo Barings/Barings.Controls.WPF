@@ -5,8 +5,9 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>Zachary Becknell</authors>
-    <owners>$author$</owners>
+    <language>en-US</language>
     <projectUrl>https://github.com/Barings/Barings.Controls.WPF</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/Barings/Barings.Controls.WPF/master/license.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>No more code in code-behind (thanks Sundeep!); added FontAwesome icon library</releaseNotes>
