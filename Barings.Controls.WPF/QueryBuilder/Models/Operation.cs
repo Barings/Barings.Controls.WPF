@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Windows.Media.TextFormatting;
 using Barings.Controls.WPF.Extensions;
 
 namespace Barings.Controls.WPF.QueryBuilder.Models

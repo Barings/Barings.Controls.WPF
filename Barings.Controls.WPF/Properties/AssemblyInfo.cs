@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Barings")]
 [assembly: AssemblyProduct("Barings.Controls.WPF")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  2017 Barings")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

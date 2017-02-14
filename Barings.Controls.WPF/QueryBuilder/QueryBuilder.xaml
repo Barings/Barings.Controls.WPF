@@ -21,9 +21,9 @@
                     Click="GoButtonOnClick">Go</Button>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <Button x:Name="SaveButton" Padding="5 0" Margin="0 0 5 0"
-                    Click="SaveButtonOnClick">Save to file</Button>
+                    Click="SaveButtonOnClick" ToolTip="Save this query to a file.">Export To File</Button>
                 <Button x:Name="LoadButton" Padding="5 0" Margin="0 0 5 0"
-                    Click="LoadButtonOnClick">Load from file</Button>
+                    Click="LoadButtonOnClick" ToolTip="Import query from a file.">Import From File</Button>
                 <CheckBox x:Name="AutoUpdateCheckBox" Checked="AutoUpdateCheckBox_OnChecked" Unchecked="AutoUpdateCheckBox_OnUnchecked" VerticalContentAlignment="Center" ToolTip="Auto update filter results.">Auto Update</CheckBox>
             </StackPanel>
             <Button Grid.Column="2" x:Name="ClearButton" Margin="0 0 5 0"

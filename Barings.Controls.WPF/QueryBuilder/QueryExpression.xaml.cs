@@ -98,6 +98,11 @@ namespace Barings.Controls.WPF.QueryBuilder
 	            ? Operation?.GetLinqExpression(Field, StringValue)
 	            : Operation?.GetSqlExpression(Field, StringValue);
 	    }
+
+	    public string DescriptionText()
+	    {
+	        return $"{Field} {Operation?.Name} {Value.ToString()}";
+        }
 		
 		public void ValidateExpression()
 		{
@@ -116,23 +121,7 @@ namespace Barings.Controls.WPF.QueryBuilder
 		    }
 		}
 
-		private void MakeInvalidAppearance()
-		{
-			ToolTip = "Required values missing.";
-			Background = new SolidColorBrush
-			{
-				Color = Colors.IndianRed,
-				Opacity = .5
-			};
-		}
-
-		private void MakeValidAppearance()
-		{
-			ToolTip = null;
-			Background = null;
-		}
-
-		public void RemoveHandlers()
+	    public void RemoveHandlers()
 		{
 			RemoveClicked = null;
 			ConvertToGroupClicked = null;
@@ -162,50 +151,66 @@ namespace Barings.Controls.WPF.QueryBuilder
             ExpressionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		private void SetValueInput()
-		{
-			var operation = OperationList.SelectedItem as Operation;
+	    private void SetValueInput()
+	    {
+	        var operation = OperationList.SelectedItem as Operation;
 
-			if (operation == null) return;
+	        if (operation == null) return;
 
-			var field = FieldList.SelectedItem as Field;
+	        var field = FieldList.SelectedItem as Field;
 
-			if (field == null) return;
+	        if (field == null) return;
 
-			// Dates
-			if (field.FieldType == typeof(DateTime) || field.FieldType == typeof(DateTime?))
-			{
-				MakeVisible(ValueDatePicker);
-			}
-			else if (field.FieldType.IsNumeric())
-			{
-				MakeVisible(ValueNumericTextBox);
-				ValueComboBox.ItemsSource = null;
-			}
-			else if (field.ValuesRestrictedTo != null && field.ValuesRestrictedTo.Any())
-			{
-				MakeVisible(ValueComboBox);
-				ValueComboBox.ItemsSource = field.ValuesRestrictedTo;
-				ValueComboBox.SelectedItem = field.ValuesRestrictedTo.ToList()[0];
-			}
-			else
-			{
-				MakeVisible(ValueTextBox);
+	        // Dates
+	        if (field.FieldType == typeof(DateTime) || field.FieldType == typeof(DateTime?))
+	        {
+	            MakeVisible(ValueDatePicker);
+	        }
+	        else if (field.FieldType.IsNumeric())
+	        {
+	            MakeVisible(ValueNumericTextBox);
+	            ValueComboBox.ItemsSource = null;
+	        }
+	        else if (field.ValuesRestrictedTo != null && field.ValuesRestrictedTo.Any())
+	        {
+	            MakeVisible(ValueComboBox);
+	            ValueComboBox.ItemsSource = field.ValuesRestrictedTo;
+	            ValueComboBox.SelectedItem = field.ValuesRestrictedTo.ToList()[0];
+	        }
+	        else
+	        {
+	            MakeVisible(ValueTextBox);
 				
 				
-				ValueDatePicker.SelectedDate = null;
-				ValueComboBox.ItemsSource = null;
-			}
+	            ValueDatePicker.SelectedDate = null;
+	            ValueComboBox.ItemsSource = null;
+	        }
 
-			ValueTextBox.IsEnabled = operation.RequiresValue;
-			ValueComboBox.IsEnabled = operation.RequiresValue;
-			ValueDatePicker.IsEnabled = operation.RequiresValue;
-			ValueNumericTextBox.IsEnabled = operation.RequiresValue;
+	        ValueTextBox.IsEnabled = operation.RequiresValue;
+	        ValueComboBox.IsEnabled = operation.RequiresValue;
+	        ValueDatePicker.IsEnabled = operation.RequiresValue;
+	        ValueNumericTextBox.IsEnabled = operation.RequiresValue;
 
-			if (!operation.RequiresValue) ValueComboBox.SelectedItem = null;
-		}
+	        if (!operation.RequiresValue) ValueComboBox.SelectedItem = null;
+	    }
 
-		private void MakeVisible(Control control)
+	    private void MakeInvalidAppearance()
+	    {
+	        ToolTip = "Required values missing.";
+	        Background = new SolidColorBrush
+	        {
+	            Color = Colors.IndianRed,
+	            Opacity = .5
+	        };
+	    }
+
+	    private void MakeValidAppearance()
+	    {
+	        ToolTip = null;
+	        Background = null;
+	    }
+
+	    private void MakeVisible(Control control)
 		{
 			List<Control> controls = new List<Control>
 			{

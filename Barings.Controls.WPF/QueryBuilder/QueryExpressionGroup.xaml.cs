@@ -193,6 +193,26 @@ namespace Barings.Controls.WPF.QueryBuilder
 			return data;
 		}
 
+	    public void LoadFromData(QueryExpressionGroupData expressionGroup)
+	    {
+	        if (!string.IsNullOrEmpty(expressionGroup.GroupOperator))
+	            GroupMenuButton.Content = expressionGroup.GroupOperator;
+
+	        foreach (var expression in expressionGroup.Expressions)
+	        {
+	            var zExpression = AddExpression();
+	            zExpression.LoadFromData(expression);
+	        }
+
+	        if (expressionGroup.Groups == null) return;
+
+	        foreach (var group in expressionGroup.Groups)
+	        {
+	            var zExpressionGroup = AddSingleExpressionGroup();
+	            zExpressionGroup.LoadFromData(@group);
+	        }
+	    }
+
 	    public string ExpressionText(ExpressionType type)
 	    {
             var text = "(\n";
@@ -225,7 +245,23 @@ namespace Barings.Controls.WPF.QueryBuilder
             return text + ")";
         }
 
-		#endregion
+	    public string DescriptionText()
+	    {
+	        var text = "(";
+
+	        int i = 0;
+
+	        foreach (var expression in NestedExpressions)
+	        {
+	            i++;
+	            text += expression.DescriptionText() +
+                    (i < NestedExpressions.Count ? " " + GroupMenuButton.Content : "") + (i < NestedExpressions.Count ? "\n" : "");
+	        }
+
+	        return text + ")";
+	    }
+
+	    #endregion
 
 		#region EVENTS
 
@@ -340,25 +376,5 @@ namespace Barings.Controls.WPF.QueryBuilder
 		}
 
 		#endregion
-
-		public void LoadFromData(QueryExpressionGroupData expressionGroup)
-		{
-            if (!string.IsNullOrEmpty(expressionGroup.GroupOperator))
-                GroupMenuButton.Content = expressionGroup.GroupOperator;
-
-			foreach (var expression in expressionGroup.Expressions)
-			{
-				var zExpression = AddExpression();
-				zExpression.LoadFromData(expression);
-			}
-
-			if (expressionGroup.Groups == null) return;
-
-			foreach (var group in expressionGroup.Groups)
-			{
-				var zExpressionGroup = AddSingleExpressionGroup();
-				zExpressionGroup.LoadFromData(group);
-			}
-		}
 	}
 }

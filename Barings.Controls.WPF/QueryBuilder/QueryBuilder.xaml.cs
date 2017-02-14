@@ -172,6 +172,11 @@ namespace Barings.Controls.WPF.QueryBuilder
             }
         }
 
+        public string DescriptionText()
+        {
+            return RootExpressionGroup.DescriptionText();
+        }
+
         #endregion
 
         #region PRIVATE
@@ -260,8 +265,6 @@ namespace Barings.Controls.WPF.QueryBuilder
             }
         }
 
-        #endregion
-
         private void AutoUpdateCheckBox_OnChecked(object sender, RoutedEventArgs e)
         {
             RootExpressionGroupOnExpressionChanged(sender, e);
@@ -272,5 +275,7 @@ namespace Barings.Controls.WPF.QueryBuilder
         {
             GoButton.IsEnabled = true;
         }
+
+        #endregion
     }
 }

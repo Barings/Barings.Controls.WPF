@@ -1,5 +1,4 @@
 ﻿using System;
-using Barings.Controls.WPF.QueryBuilder.Attributes;
 
 namespace Barings.Controls.WPF.QueryBuilder.Models
 {

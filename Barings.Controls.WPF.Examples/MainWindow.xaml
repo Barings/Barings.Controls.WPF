@@ -19,9 +19,11 @@
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <queryBuilder:QueryBuilder CollectionToFilter="{Binding Collection, Mode=TwoWay}" />
+                    <queryBuilder:QueryBuilder x:Name="QueryBuilder" CollectionToFilter="{Binding Collection, Mode=TwoWay}" />
                     <DataGrid Grid.Row="1" ItemsSource="{Binding Collection, Mode=TwoWay}" />
+                    <Button Grid.Row="2" HorizontalAlignment="Left" Margin="5" Click="ButtonBase_OnClick">Show Description</Button>
                 </Grid>
             </TabItem>
         </TabControl>

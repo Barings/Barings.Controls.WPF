@@ -13,5 +13,10 @@ namespace Barings.Controls.WPF.Examples
 		{
 			InitializeComponent();
 		}
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(QueryBuilder.DescriptionText());
+        }
 	}
 }
