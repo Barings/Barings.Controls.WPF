@@ -10,8 +10,7 @@
     <licenseUrl>https://raw.githubusercontent.com/Barings/Barings.Controls.WPF/master/license.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>No more code in code-behind (thanks Sundeep!); added FontAwesome icon library</releaseNotes>
-    <copyright>Copyright 2017</copyright>
+    <copyright>Copyright 2017 Barings</copyright>
     <tags>controls wpf query builder sql</tags>
   </metadata>
 </package>

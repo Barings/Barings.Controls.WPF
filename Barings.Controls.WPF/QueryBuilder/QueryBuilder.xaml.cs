@@ -104,6 +104,9 @@ namespace Barings.Controls.WPF.QueryBuilder
         private bool IsFiltering { get; set; }
         private bool IsLoading { get; set; }
 
+        /// <summary>
+        /// Filters the current collection.
+        /// </summary>
         public void FilterCollection()
         {
             try
@@ -148,11 +151,17 @@ namespace Barings.Controls.WPF.QueryBuilder
             }
         }
 
+        /// <summary>
+        /// Returns a serialized string representing the query as it currently is.
+        /// </summary>
         public string SaveToString()
         {
             return JsonConvert.SerializeObject(RootExpressionGroup.GetDataObject(), Formatting.Indented);
         }
 
+        /// <summary>
+        /// Loads the builder with a saved query (obtained from <see cref="SaveToString()"/>)
+        /// </summary>
         public void LoadFromSavedData(string data)
         {
             try
@@ -172,9 +181,23 @@ namespace Barings.Controls.WPF.QueryBuilder
             }
         }
 
+        /// <summary>
+        /// Returns a plain text description of the query filter.
+        /// </summary>
         public string DescriptionText()
         {
             return RootExpressionGroup.DescriptionText();
+        }
+        
+        /// <summary>
+        /// Accepts a saved query string and a collection and returns the filtered collection.
+        /// </summary>
+        public static IList FilterFromSaved(string savedQuery, IList collectionToFilter)
+        {
+            var builder = new QueryBuilder {CollectionToFilter = collectionToFilter};
+            builder.LoadFromSavedData(savedQuery);
+            builder.FilterCollection();
+            return builder.CollectionToFilter;
         }
 
         #endregion
