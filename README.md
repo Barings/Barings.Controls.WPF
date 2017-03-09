@@ -4,6 +4,9 @@ A collection of WPF controls:
 
 * NumericTextBox
 * QueryBuilder
+* SqlEditor
+* CSharpEditor
+* XmlEditor
 
 ## Installation
 
