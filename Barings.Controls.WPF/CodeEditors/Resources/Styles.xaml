@@ -1,0 +1,346 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Color x:Key="BabsonBlueColor">#182A54</Color>
+    <Color x:Key="BabsonGreenColor">#00953b</Color>
+    <Color x:Key="BabsonGreen80Color">#00AB5F</Color>
+    <Color x:Key="BabsonGreen50Color">#80c998</Color>
+    <Color x:Key="BabsonCoolGrayColor">#768693</Color>
+    <Color x:Key="BabsonCoolGray60Color">#ACB5BC</Color>
+    <Color x:Key="BabsonLightGrayColor">#DBE0E1</Color>
+    
+    <SolidColorBrush x:Key="BabsonBlueBrush" Color="{StaticResource BabsonBlueColor}" /> <!--This is not correct on the PDF-->
+    <SolidColorBrush x:Key="BabsonBlue80Brush" Color="#304D76" />
+    <SolidColorBrush x:Key="BabsonBlue60Brush" Color="#647696" />
+    <SolidColorBrush x:Key="BabsonBlue50Brush" Color="#7D8BA7" />
+    <SolidColorBrush x:Key="BabsonBlue40Brush" Color="#96A1B7" />
+    <SolidColorBrush x:Key="BabsonBlue20Brush" Color="#647696" />
+
+    <SolidColorBrush x:Key="BabsonGreenBrush" Color="{StaticResource BabsonGreenColor}" />
+    <SolidColorBrush x:Key="BabsonGreen80Brush" Color="#00AB5F" />
+    <SolidColorBrush x:Key="BabsonGreen50Brush" Color="#80C998" />
+
+    <!--Secondary Colors-->
+    <SolidColorBrush x:Key="BabsonCoolGray" Color="{StaticResource BabsonCoolGrayColor}" />
+    <SolidColorBrush x:Key="BabsonCoolGray80" Color="#959DA6" />
+    <SolidColorBrush x:Key="BabsonCoolGray60" Color="#ACB5BC" />
+    <SolidColorBrush x:Key="BabsonCoolGray50" Color="#B9C0C6" />
+    <SolidColorBrush x:Key="BabsonCoolGray40" Color="#C7CDD2" />
+    <SolidColorBrush x:Key="BabsonCoolGray20" Color="#E4E5E8" />
+
+    <SolidColorBrush x:Key="BabsonLightBlue" Color="#004b98" />
+    <SolidColorBrush x:Key="BabsonLightBlue50" Color="#819FCB" />
+
+    <SolidColorBrush x:Key="BabsonLightGray" Color="#DBE0E1" />
+    <SolidColorBrush x:Key="BabsonLightGray50" Color="#EDEFF0" />
+
+    <!--Tertiary Colors-->
+    <SolidColorBrush x:Key="Lime" Color="#6bc04b" />
+    <SolidColorBrush x:Key="PaleGreen" Color="#c1e089" />
+    <SolidColorBrush x:Key="Brick" Color="#a22b2a" />
+    <SolidColorBrush x:Key="Sky" Color="#65b2e9" />
+    <SolidColorBrush x:Key="LightBlue" Color="#bbe8ff" />
+    <SolidColorBrush x:Key="Clay" Color="#e65400" />
+
+    <!--Gradients-->
+    <LinearGradientBrush x:Key="BabsonCoolGrayGradient" StartPoint="-.5,-.5" EndPoint="1.5,1.5">
+        <GradientStop Color="#DBE0E1" Offset="0" />
+        <GradientStop Color="#ACB5BC" Offset=".75" />
+        <GradientStop Color="#959DA6" Offset="1"/>
+    </LinearGradientBrush>
+
+    <Style TargetType="{x:Type TabItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Grid>
+                        <Border 
+                                x:Name="Border"
+                                Margin="0,0,-4,0" 
+                                Background="{StaticResource BabsonBlue80Brush}"
+                                BorderBrush="White" 
+                                BorderThickness="1,1,1,1"
+                                CornerRadius="12,2,0,0" >
+                            <ContentPresenter x:Name="ContentSite"
+                            		VerticalAlignment="Center"
+                            		HorizontalAlignment="Center"
+                            		ContentSource="Header"
+                            		Margin="12,2,12,2"
+                            		RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Panel.ZIndex" Value="100" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BabsonGreenBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="TextElement.Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter Property="Panel.ZIndex" Value="0" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BabsonBlue80Brush}" />
+                            <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="TextElement.Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BabsonGreenBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="TextElement.Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button">
+        <!--Default state properties-->
+        <Setter Property="Background" Value="{DynamicResource BabsonCoolGrayGradient}" />
+        <Setter Property="Padding" Value="5" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" Padding="5">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <!--Altered state properties-->
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource BabsonCoolGray}" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{StaticResource BabsonCoolGray}" />
+                <Setter Property="TextElement.Foreground" Value="{StaticResource BabsonCoolGray}"></Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="32" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                          x:Name="Border"
+                          Grid.ColumnSpan="2"
+                          CornerRadius="0"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="0" />
+                        <Border
+                          Grid.Column="0"
+                          CornerRadius="0"
+                          Background="Transparent"
+                          BorderBrush="Transparent"
+                          BorderThickness="3" />
+                        <Path x:Name="Arrow" 
+                              Grid.Column="1"
+                              Height="8" Width="8"
+                              Stretch="Uniform" 
+                              Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z " 
+                              Margin="0,0,6,0" 
+                              HorizontalAlignment="Right">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="BtnArrowColor" Color="#FF333333"/>
+                            </Path.Fill>
+                        </Path>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                            <Setter Property="Foreground" Value="Gray"/>
+                            <Setter TargetName="Arrow" Property="Fill" Value="Gray" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border
+                                  Name="Border"
+                                    Padding="5"
+                                    Margin="2"
+                                    BorderThickness="2"
+                                    CornerRadius="0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent" >
+
+                        <TextBlock TextAlignment="Left">
+                            <ContentPresenter />
+                        </TextBlock>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="true">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BabsonCoolGray}"/>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BabsonLightGray}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+        <Border x:Name="PART_ContentHost" Focusable="True" />
+    </ControlTemplate>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="Background" Value="{DynamicResource BabsonCoolGrayGradient}" />
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton
+                                Name="ToggleButton"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Foreground}"
+                                Style="{StaticResource ComboBoxToggleButton}"
+                                Grid.Column="2"
+                                Focusable="false"
+                                IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press">
+                        </ToggleButton>
+                        <ContentPresenter
+                                Name="ContentSite"
+                                IsHitTestVisible="False"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                Margin="5,3,3,3"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left" />
+                        <TextBox x:Name="PART_EditableTextBox"
+                                Style="{x:Null}"
+                                Template="{StaticResource ComboBoxTextBox}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="3,3,23,3"
+                                Focusable="True"                               
+                                Visibility="Hidden"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                        <Popup
+                                Name="Popup"
+                                Placement="Bottom"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                PopupAnimation="Slide">
+                            <Grid
+                                  Name="DropDown"
+                                  SnapsToDevicePixels="True"               
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border
+                                        x:Name="DropDownBorder"
+                                        Background="White"
+                                        BorderThickness="1"
+                                        BorderBrush="{StaticResource BabsonCoolGray50}"/>
+                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource BabsonCoolGray}" />
+                        </Trigger>
+                        <!--<Trigger Property="HasItems" Value="false">
+                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                        </Trigger>-->
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                            <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                            <Setter TargetName="DropDownBorder" Property="Margin" Value="0,0,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsEditable" Value="true">
+                            <Setter Property="IsTabStop" Value="false"/>
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility"    Value="Visible"/>
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GridSplitterPreviewStyle" >
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Fill="#80000000"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="GridSplitterStyle1" TargetType="{x:Type GridSplitter}">
+        <Setter Property="Background" Value="{StaticResource BabsonCoolGray80}"/>
+        <Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GridSplitter}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}">
+                        <Canvas RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True"
+                                    Height="6" VerticalAlignment="Center"
+                                    Width="50" HorizontalAlignment="Center">
+                            <Line X1="0" X2="50" Y1="0" Y2="0"
+                                      Stroke="White" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="1" Y2="1"
+                                      Stroke="#A0A0A0" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="4" Y2="4"
+                                      Stroke="White" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="5" Y2="5"
+                                      Stroke="#A0A0A0" StrokeThickness="1"/>
+                        </Canvas>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="CellItemNormalBackgroundBrush" Color="{StaticResource BabsonCoolGray60Color}"/>
+    <SolidColorBrush x:Key="CellItemNormalBorderBrush" Color="#FFC9CACA"/>
+    <SolidColorBrush x:Key="CellItemSelectedBorderBrush" Color="#FF6DBDD1"/>
+    <SolidColorBrush x:Key="CellRowHoverBackgroundBrush" Color="{StaticResource BabsonGreen50Color}"/>
+    <SolidColorBrush x:Key="CellItemAltNormalBackgroundBrush" Color="{StaticResource BabsonLightGrayColor}"/>
+    <SolidColorBrush x:Key="CellItemSelectedBackgroundBrush" Color="{StaticResource BabsonGreen80Color}"/>
+
+</ResourceDictionary>

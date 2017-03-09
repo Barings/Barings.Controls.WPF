@@ -47,6 +47,9 @@
       <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -73,6 +76,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEditors\CSharpEditor.xaml.cs">
+      <DependentUpon>CSharpEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CodeEditors\Highlighting\AvalonEditExtensions.cs" />
+    <Compile Include="CodeEditors\Highlighting\HighlightMatchingCurlyBraces.cs" />
+    <Compile Include="CodeEditors\Highlighting\HighlightMatchingParentheses.cs" />
+    <Compile Include="CodeEditors\Highlighting\HighlightMatchingWords.cs" />
+    <Compile Include="CodeEditors\SqlEditor.xaml.cs">
+      <DependentUpon>SqlEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CodeEditors\XmlEditor.xaml.cs">
+      <DependentUpon>XmlEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\GenericExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -101,6 +117,26 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CodeEditors\CSharpEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CodeEditors\Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CodeEditors\Resources\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CodeEditors\SqlEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CodeEditors\XmlEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="QueryBuilder\QueryBuilder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -115,6 +151,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CodeEditors\Resources\CSharp-Mode.xshd" />
+    <EmbeddedResource Include="CodeEditors\Resources\JavaScript-Mode.xshd" />
+    <EmbeddedResource Include="CodeEditors\Resources\SQL-Mode Dark.xshd" />
+    <EmbeddedResource Include="CodeEditors\Resources\SQL-Mode.xshd" />
+    <EmbeddedResource Include="CodeEditors\Resources\XML-Mode.xshd" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
