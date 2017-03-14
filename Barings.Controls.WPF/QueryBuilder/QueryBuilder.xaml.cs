@@ -23,6 +23,8 @@ namespace Barings.Controls.WPF.QueryBuilder
     {
         #region PROPERTIES
 
+        private bool IsFiltering { get; set; }
+        private bool IsLoading { get; set; }
         private IList OriginalList { get; set; }
         private QueryExpressionGroup RootExpressionGroup { get; set; }
         public List<Field> Fields { get; set; }
@@ -96,13 +98,14 @@ namespace Barings.Controls.WPF.QueryBuilder
             InitializeRootExpressionGroup();
         }
 
+        /// <summary>
+        /// Returns the text of the query for a given ExpressionType.
+        /// </summary>
         public string GetStatement(ExpressionType type)
         {
-            return type == ExpressionType.Sql ? $"SELECT *\nFROM {TableName}\nWHERE\n" : "" + RootExpressionGroup.ExpressionText(type);
+            return (type == ExpressionType.Sql ? $"SELECT *\nFROM {TableName}\nWHERE\n" : "") + RootExpressionGroup.ExpressionText(type);
         }
 
-        private bool IsFiltering { get; set; }
-        private bool IsLoading { get; set; }
 
         /// <summary>
         /// Filters the current collection.

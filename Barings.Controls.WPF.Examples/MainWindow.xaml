@@ -24,7 +24,8 @@
                     </Grid.RowDefinitions>
                     <queryBuilder:QueryBuilder x:Name="QueryBuilder" CollectionToFilter="{Binding Collection, Mode=TwoWay}" />
                     <DataGrid Grid.Row="1" ItemsSource="{Binding Collection, Mode=TwoWay}" />
-                    <Button Grid.Row="2" HorizontalAlignment="Left" Margin="5" Click="ButtonBase_OnClick">Show Description</Button>
+                    <Button Grid.Row="2" HorizontalAlignment="Left" Margin="5" Click="QueryDescriptionButton_OnClick">Show Description</Button>
+                    <Button Grid.Row="2" HorizontalAlignment="Right" Margin="5" Click="SqlButton_OnClick">Show SQL Code</Button>
                 </Grid>
             </TabItem>
             <TabItem Header="Editors">
